@@ -1,0 +1,95 @@
+#!/bin/bash
+#	test.sh
+#
+#	=============================================================
+#
+#   Copyright 1996-2024 Tom Barbalet. All rights reserved.
+#
+#   Permission is hereby granted, free of charge, to any person
+#   obtaining a copy of this software and associated documentation
+#   files (the "Software"), to deal in the Software without
+#   restriction, including without limitation the rights to use,
+#   copy, modify, merge, publish, distribute, sublicense, and/or
+#   sell copies of the Software, and to permit persons to whom the
+#   Software is furnished to do so, subject to the following
+#   conditions:
+#
+#   The above copyright notice and this permission notice shall be
+#	included in all copies or substantial portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#   OTHER DEALINGS IN THE SOFTWARE.
+#
+#   This software is a continuing work of Tom Barbalet, begun on
+#   13 June 1996. No apes or cats were harmed in the writing of
+#   this software.
+
+echo "--- c output ---"
+
+cc satireArray.c -o satireArray
+cc satireReal.c -o satireReal
+
+./satireArray
+./satireReal
+
+rm satireArray
+rm satireReal
+
+echo "--- rust output ---"
+
+rustc satire.rs
+
+./satire
+
+rm satire
+
+echo "--- swift output ---"
+
+swiftc satireReal.swift
+
+./satireReal
+
+rm satireReal
+
+echo "--- go output ---"
+
+go run satireReal.go
+
+echo "--- clojure output ---"
+
+clj -M satire.clj
+
+echo "--- ggcc generated code ---"
+
+cc werewolf.c -o ww
+
+./ww satireReal.c -js satireReal_new.js -p satireReal_new.py -j satireReal_new.java
+
+echo "--- ggcc compile javasscipt code ---"
+
+node satireReal_new.js
+
+echo "--- ggcc compile python code ---"
+
+python satireReal_new.py
+
+rm satireReal_new.js
+rm satireReal_new.py
+
+echo "--- ggcc compile java code ---"
+
+javac satireReal_new.java
+java satireReal_new
+
+rm satireReal_new.java
+rm satireReal_new.class
+
+rm ww
+
+
