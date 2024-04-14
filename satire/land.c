@@ -97,7 +97,7 @@ void tile_patch(int refine) {
 		while ( px < span_minor ) {
 			int val1 = 0;
 			int ty = 0;
-			int tseed;
+			int tseed = 0;
 			
 			val1 = ( ( px << 2 ) + ( py << 10 ) );
 			
@@ -121,31 +121,31 @@ void tile_patch(int refine) {
 					while ( my < span_major ) {
 						int mx = 0;
 						while ( mx < span_major ) {
-							int point = 0;
-							int pointx = 0;
-							int pointy = 0;
-							int local_map_point;
+							int pnt = 0;
+							int pntx = 0;
+							int pnty = 0;
+							int local_map_pnt = 0;
 							
-							point = ( ( mx | ( my << 8 ) ) + ( span_major * ( val1 + val2 ) ) );
-							pointx = ( point & 255 );
-							pointy = ( point >> 8 );
+							pnt = ( ( mx | ( my << 8 ) ) + ( span_major * ( val1 + val2 ) ) );
+							pntx = ( pnt & 255 );
+							pnty = ( pnt >> 8 );
 							
 							
 							if (( refine & 2 ) == 2) {
-								int pointx_tmp = pointx + pointy;
-								pointy = pointx - pointy;
-								pointx = pointx_tmp;
+								int pntx_tmp = pntx + pnty;
+								pnty = pntx - pnty;
+								pntx = pntx_tmp;
 							}
 							
-							local_map_point = tiles_topography(pointx, pointy) + val3;
+							local_map_pnt = tiles_topography(pntx, pnty) + val3;
 
-							if ( local_map_point < 0 ) {
-								local_map_point = 0;
+							if ( local_map_pnt < 0 ) {
+								local_map_pnt = 0;
 							}
-							if ( local_map_point > 255 ) {
-								local_map_point = 255;
+							if ( local_map_pnt > 255 ) {
+								local_map_pnt = 255;
 							}
-							tiles_set_topography(pointx, pointy, local_map_point);
+							tiles_set_topography(pntx, pnty, local_map_pnt);
 							mx += 1;
 						}
 						my += 1;
@@ -160,20 +160,47 @@ void tile_patch(int refine) {
 	}
 }
 
-// void tile_round() {
-// 
-// }
-// 
-// void tile_swap_topography() {
-// 
-// }
+void tile_round() {
+	int local_tile_dimension = MAP_DIMENSION;
+	int span_minor = 0;
+	while ( span_minor < 6 ) {
+		int py = 0;
+		while ( py < local_tile_dimension ) {
+			int px = 0;
+			while ( px < local_tile_dimension ) {
+				int sum = 0;
+				int ty = -1;
+				while ( ty < 2 ) {
+					int tx = -1;
+					while ( tx < 2 ) {
+						sum += tiles_topography(px + tx, py + ty );
+						tx += 1;
+					}
+					ty += 1;
+				}
+				tiles_set_topography(px, py, ( sum / 9 ) );
+				px += 1;
+			}
+			py += 1;
+		}
+		span_minor += 1;
+	}
+}
+
+void tile_swap_topography() {
+	int loop = 0;
+	while(loop < MAP_DIMENSION) {
+		topography[MAP_DIMENSION + loop] = topography[loop];
+		loop += 1;
+	}
+}
 
 void land_init() {
 	int refine = 0;
 	while ( refine < 7 ) {
 		tile_patch( refine );
-// 		tile_round();
-// 		tile_swap_topography();
+		tile_round();
+		tile_swap_topography();
 		refine += 1;
 	}
 }
@@ -204,5 +231,5 @@ void resolve() {
 }
 
 int main (void) {
-	resolve();	
+	land_init();	
 }
