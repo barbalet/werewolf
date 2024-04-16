@@ -34,7 +34,7 @@ echo "--- check code ---"
 
 cc werewolf.c -o ww
 
-./ww land.c -js land.js -p land.py -j land.java
+./ww land.c -p land.py -j land.java -js land.js
 ./ww satireReal.c -js satireReal.js -p satireReal.py -j satireReal.java
 
 cc land.c -o land
@@ -64,4 +64,4 @@ diff satireReal.java satireReal_compare.java
 
 diff land.java land_compare.java
 diff land.py land_compare.py
-#diff land.js land_compare.js bug that needs invesigation
+diff land.js land_compare.js
