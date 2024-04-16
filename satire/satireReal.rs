@@ -1,5 +1,3 @@
-// Importing necessary libraries
-use std::f32::consts::PI;
 
 // Constants
 const STARTING_X: i32 = 5;
