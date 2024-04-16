@@ -635,6 +635,8 @@ void translateFile(char* filename, char* writefilename, int noPrint, fileHandler
     FILE* reading = fopen(filename, "rb");
     FILE* writing = fopen(writefilename, "w");
 
+    clearLineArray(lineArray);
+    
     if (className) {
         tabs = 1;
     } else {
