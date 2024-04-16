@@ -6,11 +6,10 @@ import (
 )
 
 // This is a contant
-const (
-	STARTING_X = 5
-	STARTING_Y = 5
-	TWO_PI     = 6.0
-)
+
+const STARTING_X = 5
+const STARTING_Y = 5
+const TWO_PI     = 6.0
 
 var radiusValue [5]int
 
