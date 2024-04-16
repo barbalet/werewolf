@@ -62,6 +62,9 @@ diff satireReal.js satireReal_compare.js
 diff satireReal.py satireReal_compare.py
 diff satireReal.java satireReal_compare.java
 
+echo "--- land.java ---"
 diff land.java land_compare.java
+echo "--- land.py ---"
 diff land.py land_compare.py
+echo "--- land.js ---"
 diff land.js land_compare.js
