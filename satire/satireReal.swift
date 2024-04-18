@@ -1,6 +1,6 @@
 
+// This is a contant 
 
-// Constants
 let STARTING_X = 5
 let STARTING_Y = 5
 let TWO_PI: Float = 6.0
