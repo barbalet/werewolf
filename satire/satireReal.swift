@@ -1,5 +1,4 @@
 
-import Foundation
 
 // Constants
 let STARTING_X = 5
