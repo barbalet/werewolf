@@ -68,23 +68,6 @@ int lineCompare(char * line, char * checkFor) {
     return 0;
 }
 
-#define FLOAT_SPACING (6)
-#define VOID_SPACING (5)
-#define INT_SPACING (4)
-
-int moveBasedOnExpected(char * line) {
-    if ((line[0] == 'f') && (line[1] == 'l') && (line[2] == 'o') && (line[3] == 'a') && (line[4] == 't') && (line[5] == ' ')) {
-        return FLOAT_SPACING;
-    }
-    if ((line[0] == 'v') && (line[1] == 'o') && (line[2] == 'i') && (line[3] == 'd') && (line[4] == ' ')) {
-        return VOID_SPACING;
-    }
-    if ((line[0] == 'i') && (line[1] == 'n') && (line[2] == 't') && (line[3] == ' ')) {
-        return INT_SPACING;
-    }
-    return 0;
-}
-
 int containsValue(char * line, char contains){
     int loop = 0;
     do{
@@ -665,175 +648,6 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     return 1;
 }
 
-int swiftFromCFunction(char * line, char * newLine) {
-    return 0;
-}
-
-int nothingToPrintSwift(char * line, char * newLine, int tabs, int noPrint) {
-    
-    if (noPrint && !outOfMain)
-    {
-        return 0;
-    }
-    
-    if (lineCompare(line, "#"))
-    {
-        return 0;
-    }
-    if (lineCompare(line, "int main"))
-    {
-        outOfMain = 0;
-        return 0;
-    }
-    
-    removeReplace(line, newLine, ";", 0L);
-    copyLineArray(line, newLine);
-    
-    if (lineCompare(line, "return"))
-    {
-        if (outOfMain)
-        {
-            return 1;
-        }
-        return 0;
-    }
-    if (lineCompare(line, "printf(\""))
-    {
-        if (noPrint) {
-            return 0;
-        }
-        
-        char tempLine[200] = {0};
-        char tempLine2[200] = {0};
-        char tempLine3[200] = {0};
-
-        removeReplace(line, tempLine, "printf(", "print(");
-        removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
-        removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
-        removeReplace(tempLine3, newLine, "\\n", 0L);
-        return 2;
-    }
-    
-    if (lineCompare(line, "//"))
-    {
-        return 1;
-    }
-    if (lineCompare(line, "if"))
-    {
-        return 1;
-    }
-    if (lineCompare(line, "}"))
-    {
-        if (outOfMain)
-        {
-            return 1;
-        }
-        return 0;
-    }
-    if (lineCompare(line, "while"))
-    {
-        return 1;
-    }
-    if (lineCompare(line, "const"))
-    {
-        char tempLine[200] = {0};
-        removeReplace(line, tempLine, "const int ", "let ");
-        removeReplace(tempLine, newLine, "const float ", "let ");
-        return 2;
-    }
-    if (lineCompare(line, "int"))
-    {
-        if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
-            
-            beforeFunctions = 0;
-            
-            line[0] = 'f';
-            line[1] = 'n';
-            line[2] = 'z';
-            
-            removeReplace(line, tempLine, "fnz", "function");
-            removeReplace(tempLine, newLine, "int ", 0L);
-        } else {
-            if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
-                findVariableNumberArray(line, number, array, type);
-                
-                if (type[0] == 'i'){
-                    type[0] = 'I';
-                }
-                if (type[0] == 'f'){
-                    type[0] = 'F';
-                }
-                
-                sprintf(newLine, "var %s = [%s](repeating: 0, count: %s)", array, type, number);
-                
-                // = [Int](repeating: 0, count: 5)
-            } else {
-                int loop = 0;
-                while (loop < 200){
-                    newLine[loop] = line[loop];
-                    loop++;
-                }
-                newLine[0] = 'v';
-                newLine[1] = 'a';
-                newLine[2] = 'r';
-            }
-        }
-        return 2;
-    }
-    if (lineCompare(line, "float"))
-    {
-        if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
-            char tempLine2[200] = {0};
-
-            beforeFunctions = 0;
-            
-            line[0] = 'f';
-            line[1] = 'n';
-            line[2] = 'z';
-            
-            removeReplace(line, tempLine, "fnzat", "function");
-            removeReplace(tempLine, tempLine2, "int ", 0L);
-            removeReplace(tempLine2, newLine, "float ", 0L);
-        } else {
-            if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
-                findVariableNumberArray(line, number, array, type);
-                if (type[0] == 'i'){
-                    type[0] = 'I';
-                }
-                if (type[0] == 'f'){
-                    type[0] = 'F';
-                }
-                
-                sprintf(newLine, "var %s = [%s](repeating: 0, count: %s)", array, type, number);            } else {
-                removeReplace(line, newLine, "float ", "var ");
-            }
-        }
-        return 2;
-    }
-    if (lineCompare(line, "void"))
-    {
-        char tempLine[200] = {0};
-        char tempLine2[200] = {0};
-
-        beforeFunctions = 0;
-        
-        removeReplace(line, tempLine, "void", "function");
-        removeReplace(tempLine, tempLine2, "int ", 0L);
-        removeReplace(tempLine2, newLine, "float ", 0L);
-        return 2;
-    }
-    return 1;
-}
-
-
 
 void translateFile(char* filename, char* writefilename, int noPrint, fileHandler * fileHander, char * className, openEndFile * openEnd) {
     int tabs;
@@ -924,7 +738,7 @@ void translateFile(char* filename, char* writefilename, int noPrint, fileHandler
 }
 
 
-int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, char** swift, int * noPrint) {
+int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, int * noPrint) {
     int loop = 1;
     int returnValue = 0;
     
@@ -948,11 +762,6 @@ int parseArgs(int argc, const char * argv[], char** csource, char** python, char
                 *python = (char*)argv[loop];
                 returnValue = 1;
             }
-            if (row[1] == 's') {
-                loop++;
-                *swift = (char*)argv[loop];
-                returnValue = 1;
-            }
             if (row[1] == 'n') {
                 *noPrint = 1;
             }
@@ -972,29 +781,15 @@ void getClassName(char * java, char * className) {
     }while (java[loop] != '.');
 }
 
-#if 0
-
-int main(int argc, const char * argv[]) {
-    char example[200] = "float areaOperator(int findX, int findY, int loop) {";
-    char final[200] = {0};
-    swiftFromCFunction(example, final);
-    print("%s\n", final);
-    return 0;
-}
-
-
-#else
-
 int main(int argc, const char * argv[]) {
     char* python = 0L;
     char* javascript = 0L;
     char* csource = 0;
     char* java = 0L;
-    char* swift = 0L;
     char className[200] = {0};
 
     int noPrint;
-    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &swift, &noPrint)) {
+    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &noPrint)) {
         if (python) {
             printf("python : %s\n", python);
         }
@@ -1010,11 +805,6 @@ int main(int argc, const char * argv[]) {
             getClassName(java, className);
             printf("class name : %s\n", className);
         }
-
-        if (swift) {
-            printf("swift : %s\n", swift);
-        }
-
         
         if (noPrint) {
             printf("No Print ON\n");
@@ -1028,11 +818,6 @@ int main(int argc, const char * argv[]) {
         if (csource && java) {
             translateFile(csource, java, noPrint, &nothingToPrintJava, className, &openEndJava);
         }
-        if (csource && swift) {
-            translateFile(csource, swift, noPrint, &nothingToPrintSwift, 0L, 0L);
-        }
     }
     return 0;
 }
-
-#endif
