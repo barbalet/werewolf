@@ -6,13 +6,15 @@ The WereWolf or ``ww`` is a translator between a version of C which compiles thr
 *	Python which compiles through ``python``
 *	Java which compiles through ``javac/java``
 
-This is currently a work in progress. More documentation coming shortly!
+For now, these three languages will be the only ones ported. To optimize and further pattern match the ``ww`` “satire” solution to effective cross-porting.
 
 ## Command Line Syntax ##
 
-Inside the ``satire`` directory, compile ggcc.c:
+Inside the ``satire`` directory, compile werewolf.c:
 
 ``cc werewolf.c -o ww``
+
+Then ``ww`` can be ran as follows:
 
 ``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java`` generates the anticipated output files
 
