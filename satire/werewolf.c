@@ -88,6 +88,14 @@ void addASpace(char * line) {
     line[loop+1] = 0;
 }
 
+int findFloat(char * line) {
+    return ((line[0] == 'f') && (line[1] == 'l') && (line[2] == 'o') && (line[3] == 'a') && (line[4] == 't'));
+}
+
+int findInt(char * line) {
+    return ((line[0] == 'i') && (line[1] == 'n') && (line[2] == 't'));
+}
+
 void findVariableNumberArray(char * line, char * number, char * array, char * type) {
     int loop = 4;
     int numberCount = 0;
@@ -95,13 +103,13 @@ void findVariableNumberArray(char * line, char * number, char * array, char * ty
     if (line[0] == 'f') {
         loop = 6;
     }
-    if ((line[0] == 'i') && (line[1] == 'n') && (line[2] == 't')) {
+    if (findInt(line)) {
         type[0] = 'i';
         type[1] = 'n';
         type[2] = 't';
         type[3] = 0;
     }
-    if ((line[0] == 'f') && (line[1] == 'l') && (line[2] == 'o') && (line[3] == 'a') && (line[4] == 't')) {
+    if (findFloat(line)) {
         type[0] = 'f';
         type[1] = 'l';
         type[2] = 'o';
@@ -110,8 +118,7 @@ void findVariableNumberArray(char * line, char * number, char * array, char * ty
         type[5] = 0;
     }
     
-    if (((line[0] == 'i') && (line[1] == 'n') && (line[2] == 't') && (line[3] == ' '))||
-        (((line[0] == 'f') && (line[1] == 'l') && (line[2] == 'o') && (line[3] == 'a') && (line[4] == 't')) && (line[5] == ' '))){
+    if (findInt(line) || findFloat(line)){
         do {
             array[arrayCount] = line[loop];
             loop++;
@@ -430,7 +437,6 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "const"))
     {
-        char tempLine[200] = {0};
         if (beforeFunctions) {
             removeReplace(line, newLine, "const ", "public static final ");
         } else {
