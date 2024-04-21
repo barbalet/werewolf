@@ -24,6 +24,14 @@ Alternatively also single languages can be used. For example if you only want Ja
 
 ``./ww satire.c -j satire_new.java``
 
+## Origin of the Satire ##
+
+The idea of the satire is central to WereWolf. It offers a subset of C, Python, JavaScript and Java that describes the majority of the functionality. It is a "satire" of the language.
+
+It also provides a skeleton for language translation between the four languages versus the current crop of slightly substandard generative AI solutions. Thus it is also a satire of the current solution space.
+
+There are a few other applicable uses for the term satire in creating WereWolf. For now, these should be enough to start some discussion.
+
 ## For More Information ##
 
 ``barbalet at gmail dot com``
