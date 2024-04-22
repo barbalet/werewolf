@@ -26,7 +26,7 @@ Alternatively also single languages can be used. For example if you only want Ja
 
 ## Origin of the Satire ##
 
-The idea of the satire is central to WereWolf. It offers a subset of C, Python, JavaScript and Java that describes the majority of the functionality. It is a "satire" of the language.
+The idea of the satire is central to WereWolf. It offers a subset of C, Python, JavaScript and Java that describes the majority of the functionality. It is a "satire" of the languages.
 
 It also provides a skeleton for language translation between the four languages versus the current crop of slightly substandard generative AI solutions. Thus it is also a satire of the current solution space.
 
