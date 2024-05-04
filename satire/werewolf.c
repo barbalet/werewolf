@@ -35,6 +35,10 @@
 
 #include <stdio.h>
 
+// Ruby is still a work in progress. The aim is to get satire.c to get to satire.rb and then
+// work on the global requirements of satireArray and satireReal. When it is fully supported the
+// README.md will be updated.
+
 typedef int ( fileHandler )(char * line, char * newLine, int tabs, int noPrint);
 
 typedef void ( openEndFile )(FILE * file, int open, char * className);
@@ -380,6 +384,173 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
         removeReplace(tempLine, temp2Line, "int ", 0L);
         removeReplace(temp2Line, temp3Line, "float ", 0L);
         removeReplace(temp3Line, newLine, ") {", "):");
+    }
+    return 2;
+}
+
+int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
+    if (noPrint && !outOfMain) {
+        return 0;
+    }
+    
+    if (lineCompare(line, "#")) {
+        return 0;
+    }
+    if (lineCompare(line, "int main")) {
+        outOfMain = 0;
+        return 0;
+    }
+    
+    removeReplace(line, newLine, ";", 0L);
+    copyLineArray(line, newLine);
+    
+    if (lineCompare(line, "return")) {
+        if (outOfMain)
+        {
+            return 1;
+        }
+        return 0;
+    }
+    if (lineCompare(line, "printf(\"")) {
+        if (noPrint) {
+            return 0;
+        }
+        
+        char tempLine[200] = {0};
+        char tempLine2[200] = {0};
+
+        if (containsValue(line,'%')) {
+            char tempLine3[200] = {0};
+            char tempLine4[200] = {0};
+            removeReplace(line, tempLine, "printf(", "puts ");
+            removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
+            removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
+            removeReplace(tempLine3, tempLine4, ")", 0L);
+            removeReplace(tempLine4, newLine, "\\n", 0L);
+        } else {
+            removeReplace(line, tempLine, "printf(", "puts ");
+            removeReplace(tempLine, tempLine2, ")", 0L);
+            removeReplace(tempLine2, newLine, "\\n", 0L);
+        }
+        return 2;
+    }
+    
+    if (lineCompare(line, "//")) {
+        removeReplace(line, newLine, "// ", "#");
+        return 2;
+    }
+    if (lineCompare(line, "if")) {
+        removeReplace(line, newLine, "{", 0L);
+        return 2;
+    }
+    if (lineCompare(line, "}")) {
+        if (outOfMain) {
+            removeReplace(line, newLine, "}", "end");
+        } else {
+            removeReplace(line, newLine, "}", 0L);
+        }
+        return 2;
+    }
+    if (lineCompare(line, "while")) {
+        removeReplace(line, newLine, "{", 0L);
+        return 2;
+    }
+    if (lineCompare(line, "const int ")) {
+        removeReplace(line, newLine, "const int ", 0L);
+        return 2;
+    }
+    if (lineCompare(line, "const float ")) {
+        removeReplace(line, newLine, "const float ", 0L);
+        return 2;
+    }
+    
+    if (lineCompare(line, "int")) {
+        if (containsValue(line, '(')) {
+            char tempLine[200] = {0};
+            char tempLine2[200] = {0};
+            char tempLine3[200] = {0};
+
+            beforeFunctions = 0;
+            
+            line[0] = 'f';
+            line[1] = 'n';
+            line[2] = 'z';
+            
+            removeReplace(line, tempLine, "fnz", "def");
+            removeReplace(tempLine, tempLine2, "float ", 0L);
+            removeReplace(tempLine2, tempLine3, "int ", 0L);
+            removeReplace(tempLine3, newLine, ") {", ")");
+
+        } else {
+            if (containsValue(line, '[')) {
+                char array[200] = {0};
+                char number[200] = {0};
+                char type[200] = {0};
+
+                findVariableNumberArray(line, number, array, type);
+                sprintf(newLine, "%s = [0] * %s", array, number);
+                return 2;
+            } else {
+                char tempLine[200] = {0};
+                char tempLine2[200] = {0};
+                removeReplace(line, tempLine, "int ", 0L);
+                removeReplace(tempLine, tempLine2, "float ", 0L);
+                removeReplace(tempLine2, newLine, ") {", ")");
+                return 2;
+            }
+        }
+        return 2;
+    }
+    if (lineCompare(line, "float")) {
+        if (containsValue(line, '(')) {
+            char tempLine[200] = {0};
+            char tempLine2[200] = {0};
+            char tempLine3[200] = {0};
+
+            beforeFunctions = 0;
+            
+            line[0] = 'f';
+            line[1] = 'n';
+            line[2] = 'z';
+            
+            removeReplace(line, tempLine, "fnzat ", "def ");
+            removeReplace(tempLine, tempLine2, "float ", 0L);
+            removeReplace(tempLine2, tempLine3, "int ", 0L);
+            removeReplace(tempLine3, newLine, ") {", ")");
+            return 2;
+        } else {
+            if (containsValue(line, '[')) {
+                char array[200] = {0};
+                char number[200] = {0};
+                char type[200] = {0};
+                findVariableNumberArray(line, number, array, type);
+                sprintf(newLine, "%s = [0] * %s", array, number);
+                return 2;
+            } else {
+                char tempLine[200] = {0};
+                char tempLine2[200] = {0};
+                removeReplace(line, tempLine, "int ", 0L);
+                removeReplace(tempLine, tempLine2, "float ", 0L);
+                removeReplace(tempLine2, newLine, ") {", ")");
+                return 2;
+            }
+
+        }
+        return 2;
+    }
+    
+    
+    if (lineCompare(line, "void")) {
+        char tempLine[200] = {0};
+        char temp2Line[200] = {0};
+        char temp3Line[200] = {0};
+        
+        beforeFunctions = 0;
+
+        removeReplace(line, tempLine, "void", "def");
+        removeReplace(tempLine, temp2Line, "int ", 0L);
+        removeReplace(temp2Line, temp3Line, "float ", 0L);
+        removeReplace(temp3Line, newLine, ") {", ")");
     }
     return 2;
 }
@@ -747,7 +918,7 @@ void translateFile(char* filename, char* writefilename, int noPrint, fileHandler
 }
 
 
-int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, int * noPrint) {
+int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, char** ruby, int * noPrint) {
     int loop = 1;
     int returnValue = 0;
     
@@ -769,6 +940,11 @@ int parseArgs(int argc, const char * argv[], char** csource, char** python, char
             if (row[1] == 'p') {
                 loop++;
                 *python = (char*)argv[loop];
+                returnValue = 1;
+            }
+            if (row[1] == 'r') {
+                loop++;
+                *ruby = (char*)argv[loop];
                 returnValue = 1;
             }
             if (row[1] == 'n') {
@@ -796,10 +972,11 @@ int main(int argc, const char * argv[]) {
     char* javascript = 0L;
     char* csource = 0;
     char* java = 0L;
+    char* ruby = 0L;
     char className[200] = {0};
 
     int noPrint;
-    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &noPrint)) {
+    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &ruby, &noPrint)) {
         if (python) {
             printf("python : %s\n", python);
         }
@@ -808,6 +985,10 @@ int main(int argc, const char * argv[]) {
         }
         if (javascript) {
             printf("javascript : %s\n", javascript);
+        }
+        
+        if (ruby) {
+            printf("ruby WIP : %s\n", ruby);
         }
 
         if (java) {
@@ -819,11 +1000,16 @@ int main(int argc, const char * argv[]) {
         if (noPrint) {
             printf("No Print ON\n");
         }
+        
+        
         if (csource && javascript) {
             translateFile(csource, javascript, noPrint, &nothingToPrintJavaScript, 0L, 0L);
         }
         if (csource && python) {
             translateFile(csource, python, noPrint, &nothingToPrintPython, 0L, 0L);
+        }
+        if (csource && ruby) {
+            translateFile(csource, ruby, noPrint, &nothingToPrintRuby, 0L, 0L);
         }
         if (csource && java) {
             translateFile(csource, java, noPrint, &nothingToPrintJava, className, &openEndJava);
