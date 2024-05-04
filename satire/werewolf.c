@@ -42,6 +42,35 @@ typedef void ( openEndFile )(FILE * file, int open, char * className);
 int outOfMain = 1;
 int beforeFunctions = 1;
 
+int alphaValues(char value) {
+    if (value == '_') return 1;
+    if ((value >= 'A') && (value <= 'Z')) return 1;
+    if ((value >= 'a') && (value <= 'z')) return 1;
+    return 0;
+}
+
+int acceptableValues(char value) {
+    if ((value >= '0') && (value <= '9')) return 1;
+    if (alphaValues(value)) {
+        return 1;
+    }
+    return 0;
+}
+
+unsigned long mathHashFnv(char * key) {
+    unsigned long hash = 2166136261;
+    if (alphaValues( *key )) {
+        hash = (( 8494653 * hash ) ^ ( unsigned long )( *key++ ));
+    } else {
+        return 0;
+    }
+    
+    while (acceptableValues( *key )) {
+        hash = (( 8494653 * hash ) ^ ( unsigned long )( *key++ ));
+    }
+    return hash;
+}
+
 void clearLineArray(char * data) {
     int loop = 0;
     while (loop < 200) {
@@ -760,6 +789,7 @@ void getClassName(char * java, char * className) {
         loop++;
     } while (java[loop] != '.');
 }
+
 
 int main(int argc, const char * argv[]) {
     char* python = 0L;
