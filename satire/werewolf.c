@@ -39,12 +39,26 @@
 // work on the global requirements of satireArray and satireReal. When it is fully supported the
 // README.md will be updated.
 
+
+// This should be dynamic in the future. For now a fixed number
+unsigned long globals[200];
+unsigned long numberGlobals;
+
 typedef int ( fileHandler )(char * line, char * newLine, int tabs, int noPrint);
 
 typedef void ( openEndFile )(FILE * file, int open, char * className);
 
 int outOfMain = 1;
 int beforeFunctions = 1;
+
+void clearGlobals() {
+    int loop = 0;
+    while (loop < 200) {
+        globals[loop] = 0;
+        loop++;
+    }
+    numberGlobals = 0;
+}
 
 int alphaValues(char value) {
     if (value == '_') return 1;
@@ -73,6 +87,37 @@ unsigned long mathHashFnv(char * key) {
         hash = (( 8494653 * hash ) ^ ( unsigned long )( *key++ ));
     }
     return hash;
+}
+
+int globalfound(char * key) {
+    unsigned long hash = mathHashFnv(key);
+    if (hash == 0) {
+        printf("no text found - investigate issue");
+        return 0;
+    }
+    int loop = 0;
+    while (loop < 200) {
+        unsigned long localHash = globals[loop];
+        if (localHash != 0) {
+            if (hash == localHash) {
+                return 1;
+            }
+        }
+        loop++;
+    }
+    return 0;
+}
+
+void addGlobal(char* key) {
+    unsigned long hash = mathHashFnv(key);
+    globals[numberGlobals] = hash;
+    numberGlobals++;
+}
+
+
+
+int parseStringForGlobals(char * in, char * out) {
+    return 0;
 }
 
 void clearLineArray(char * data) {
