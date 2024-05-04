@@ -488,7 +488,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 char type[200] = {0};
 
                 findVariableNumberArray(line, number, array, type);
-                sprintf(newLine, "%s = [0] * %s", array, number);
+                sprintf(newLine, "%s = Array.new(%s)", array, number);
                 return 2;
             } else {
                 char tempLine[200] = {0};
@@ -524,7 +524,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 char number[200] = {0};
                 char type[200] = {0};
                 findVariableNumberArray(line, number, array, type);
-                sprintf(newLine, "%s = [0] * %s", array, number);
+                sprintf(newLine, "%s = Array.new(%s)", array, number);
                 return 2;
             } else {
                 char tempLine[200] = {0};
