@@ -189,8 +189,6 @@ int parseStringForGlobals(char * in, char * out) {
         }
     }
     outLocation = combineStrings(outLocation, out, internal);
-    outLocation = combineStrings(outLocation, out, "\n");
-
     return somethingHasChanged;
 }
 
@@ -493,6 +491,7 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
 }
 
 int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
+    
     if (noPrint && !outOfMain) {
         return 0;
     }
@@ -507,6 +506,10 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     
     removeReplace(line, newLine, ";", 0L);
     copyLineArray(line, newLine);
+    
+    parseStringForGlobals(line, newLine);
+    copyLineArray(line, newLine);
+
     
     if (lineCompare(line, "return")) {
         if (outOfMain)
@@ -561,10 +564,14 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "const int ")) {
         removeReplace(line, newLine, "const int ", 0L);
+        
+        //addGlobal(newLine);
+        
         return 2;
     }
     if (lineCompare(line, "const float ")) {
         removeReplace(line, newLine, "const float ", 0L);
+        //addGlobal(newLine);
         return 2;
     }
     
@@ -593,6 +600,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
 
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
+                //addGlobal(array);
                 return 2;
             } else {
                 char tempLine[LINELENGTH] = {0};
@@ -600,6 +608,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", ")");
+                //addGlobal(line);
                 return 2;
             }
         }
@@ -629,6 +638,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
+                //addGlobal(array);
                 return 2;
             } else {
                 char tempLine[LINELENGTH] = {0};
@@ -636,6 +646,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", ")");
+                //addGlobal(newLine);
                 return 2;
             }
 
@@ -1070,30 +1081,6 @@ void getClassName(char * java, char * className) {
     } while (java[loop] != '.');
 }
 
-#if 0
-
-int main(int argc, const char * argv[]) {
-    
-    char line[LINELENGTH] = "general = two_psi + 350 + incrementer";
-    char newLine[LINELENGTH] = {0};
-    
-    clearGlobals();
-    addGlobal("incrementer");
-    addGlobal("two_psi");
-    
-    printf("%s\n", line);
-    
-    if (parseStringForGlobals(line, newLine)) {
-        printf("%s\n", newLine);
-    } else {
-        printf("nothing changed!\n");
-    }
-
-    return 0;
-}
-
-#else
-
 int main(int argc, const char * argv[]) {
     char* python = 0L;
     char* javascript = 0L;
@@ -1135,14 +1122,13 @@ int main(int argc, const char * argv[]) {
         if (csource && python) {
             translateFile(csource, python, noPrint, &nothingToPrintPython, 0L, 0L);
         }
-        if (csource && ruby) {
-            translateFile(csource, ruby, noPrint, &nothingToPrintRuby, 0L, 0L);
-        }
         if (csource && java) {
             translateFile(csource, java, noPrint, &nothingToPrintJava, className, &openEndJava);
+        }
+        if (csource && ruby) {
+            clearGlobals();
+            translateFile(csource, ruby, noPrint, &nothingToPrintRuby, 0L, 0L);
         }
     }
     return 0;
 }
-
-#endif
