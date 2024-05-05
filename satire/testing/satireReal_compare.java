@@ -4,6 +4,7 @@ public class satireReal {
 	
 	public static final int STARTING_X = 5; 
 	public static final int STARTING_Y = 5; 
+	public static final int INCREMENTER = 1; 
 	
 	public static final float TWO_PI = 6; 
 	
@@ -29,7 +30,6 @@ public class satireReal {
 	}
 	
 	static void partialFind(int centerX, int centerY, int radius) { 
-		final int INCREMENTER = 1; 
 		int loop = 0;
 		int[] localRadius = new int[5];
 		float[] localFloat = new float[5];

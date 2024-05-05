@@ -3,6 +3,7 @@
 
 STARTING_X = 5  
 STARTING_Y = 5  
+INCREMENTER = 1  
 
 TWO_PI = 6  
 
@@ -25,7 +26,6 @@ def areaOperator(findX, findY, loop):
 	return valueOut 
 
 def partialFind(centerX, centerY, radius):     
-	INCREMENTER = 1  
 	loop = 0    
 	localRadius = [0] * 5
 	localFloat = [0] * 5

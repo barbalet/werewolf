@@ -111,6 +111,7 @@ int globalFound(char * key) {
 
 void addGlobal(char* key) {
     unsigned long hash = mathHashFnv(key);
+    printf("Global added %s\n", key);
     globals[numberGlobals] = hash;
     numberGlobals++;
 }
@@ -490,6 +491,15 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
     return 2;
 }
 
+int nothingToPrintRubyPostProcess(char * line, char * newLine, int tabs, int noPrint) {
+    clearLineArray(newLine);
+    if (parseStringForGlobals(line, newLine)){
+        return 2;
+    } else {
+        return 0;
+    }
+}
+
 int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     
     if (noPrint && !outOfMain) {
@@ -506,11 +516,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     
     removeReplace(line, newLine, ";", 0L);
     copyLineArray(line, newLine);
-    
-    parseStringForGlobals(line, newLine);
-    copyLineArray(line, newLine);
-
-    
+        
     if (lineCompare(line, "return")) {
         if (outOfMain)
         {
@@ -565,13 +571,13 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     if (lineCompare(line, "const int ")) {
         removeReplace(line, newLine, "const int ", 0L);
         
-        //addGlobal(newLine);
+        addGlobal(newLine);
         
         return 2;
     }
     if (lineCompare(line, "const float ")) {
         removeReplace(line, newLine, "const float ", 0L);
-        //addGlobal(newLine);
+        addGlobal(newLine);
         return 2;
     }
     
@@ -600,7 +606,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
 
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
-                //addGlobal(array);
+                addGlobal(array);
                 return 2;
             } else {
                 char tempLine[LINELENGTH] = {0};
@@ -638,7 +644,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
-                //addGlobal(array);
+                addGlobal(array);
                 return 2;
             } else {
                 char tempLine[LINELENGTH] = {0};
@@ -944,7 +950,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
 }
 
 
-void translateFile(char* filename, char* writefilename, int noPrint, fileHandler * fileHander, char * className, openEndFile * openEnd) {
+void translateFile(char* filename, char* writefilename, int noPrint, fileHandler * fileHander, fileHandler * postProcess, char * className, openEndFile * openEnd) {
     int tabs;
     int loop = 0;
     char lineArray[LINELENGTH];
@@ -991,6 +997,14 @@ void translateFile(char* filename, char* writefilename, int noPrint, fileHandler
             if (lineArrayFound) {
                 char newLine[LINELENGTH];
                 int value = (*fileHander)(lineArray, newLine, tabs, noPrint);
+                
+                if (postProcess) {
+                    copyLineArray(lineArray, newLine);
+                    int newValue = (*postProcess)(lineArray, newLine, tabs, noPrint);
+                    if ((value == 2) || (newValue == 2)) {
+                        value = 2;
+                    }
+                }
                 
                 if (writing) {
                     if (value != 0) {
@@ -1117,17 +1131,17 @@ int main(int argc, const char * argv[]) {
         
         
         if (csource && javascript) {
-            translateFile(csource, javascript, noPrint, &nothingToPrintJavaScript, 0L, 0L);
+            translateFile(csource, javascript, noPrint, &nothingToPrintJavaScript, 0L, 0L, 0L);
         }
         if (csource && python) {
-            translateFile(csource, python, noPrint, &nothingToPrintPython, 0L, 0L);
+            translateFile(csource, python, noPrint, &nothingToPrintPython, 0L, 0L, 0L);
         }
         if (csource && java) {
-            translateFile(csource, java, noPrint, &nothingToPrintJava, className, &openEndJava);
+            translateFile(csource, java, noPrint, &nothingToPrintJava, 0L, className, &openEndJava);
         }
         if (csource && ruby) {
             clearGlobals();
-            translateFile(csource, ruby, noPrint, &nothingToPrintRuby, 0L, 0L);
+            translateFile(csource, ruby, noPrint, &nothingToPrintRuby, &nothingToPrintRubyPostProcess, 0L, 0L);
         }
     }
     return 0;

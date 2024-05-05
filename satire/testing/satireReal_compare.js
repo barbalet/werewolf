@@ -3,6 +3,7 @@
 
 const STARTING_X = 5;  
 const STARTING_Y = 5;  
+const INCREMENTER = 1;  
 
 const TWO_PI = 6;  
 
@@ -28,7 +29,6 @@ function areaOperator(findX, findY, loop) {
 }
 
 function partialFind(centerX, centerY, radius) {   
-	const INCREMENTER = 1;  
 	var loop = 0;
 	var localRadius = [5];
 	var localFloat = [5];

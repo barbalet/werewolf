@@ -4,6 +4,7 @@
 
 const int STARTING_X = 5;
 const int STARTING_Y = 5;
+const int INCREMENTER = 1;
 
 int radiusValue[5];
 
@@ -21,7 +22,6 @@ int findRadius(int centerX, int centerY, int radius, int pointX, int pointY) {
 }
 
 void partialFind(int centerX, int centerY, int radius) {
-	const int INCREMENTER = 1;
 	int loop = 0;
 	int localRadius[5];
 	while (loop < radius) {

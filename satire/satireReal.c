@@ -4,6 +4,7 @@
 
 const int STARTING_X = 5;
 const int STARTING_Y = 5;
+const int INCREMENTER = 1;
 
 const float TWO_PI = 6;
 
@@ -29,7 +30,6 @@ float areaOperator(int findX, int findY, int loop) {
 }
 
 void partialFind(int centerX, int centerY, int radius) {
-	const int INCREMENTER = 1;
 	int loop = 0;
 	int localRadius[5];
 	float localFloat[5];
