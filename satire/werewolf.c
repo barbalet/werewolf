@@ -60,16 +60,16 @@ void clearGlobals() {
     numberGlobals = 0;
 }
 
-int alphaValues(char value) {
+int firstValue(char value) {
     if (value == '_') return 1;
     if ((value >= 'A') && (value <= 'Z')) return 1;
     if ((value >= 'a') && (value <= 'z')) return 1;
     return 0;
 }
 
-int acceptableValues(char value) {
+int remainingValues(char value) {
     if ((value >= '0') && (value <= '9')) return 1;
-    if (alphaValues(value)) {
+    if (firstValue(value)) {
         return 1;
     }
     return 0;
@@ -77,19 +77,19 @@ int acceptableValues(char value) {
 
 unsigned long mathHashFnv(char * key) {
     unsigned long hash = 2166136261;
-    if (alphaValues( *key )) {
+     if (firstValue( *key )) {
         hash = (( 8494653 * hash ) ^ ( unsigned long )( *key++ ));
-    } else {
+   } else {
         return 0;
     }
     
-    while (acceptableValues( *key )) {
+    while (remainingValues( *key )) {
         hash = (( 8494653 * hash ) ^ ( unsigned long )( *key++ ));
     }
     return hash;
 }
 
-int globalfound(char * key) {
+int globalFound(char * key) {
     unsigned long hash = mathHashFnv(key);
     if (hash == 0) {
         printf("no text found - investigate issue");
@@ -115,11 +115,6 @@ void addGlobal(char* key) {
 }
 
 
-
-int parseStringForGlobals(char * in, char * out) {
-    return 0;
-}
-
 void clearLineArray(char * data) {
     int loop = 0;
     while (loop < 200) {
@@ -133,6 +128,54 @@ void copyLineArray(char * dataTo, char * dataFrom) {
         dataTo[loop] = dataFrom[loop];
         loop++;
     }
+}
+
+int copyUntilZero(char * in, char * out) {
+    int loop = 0;
+    while (out[loop] != 0){
+        in[loop] = out[loop];
+        loop++;
+    }
+    return loop;
+}
+
+int parseStringForGlobals(char * in, char * out) {
+    int somethingHasChanged = 0;
+    int locationIn = 0;
+    int locationInternal = 0;
+    int locationOut = 0;
+    int alphaSet = firstValue(in[0]);
+    char internal[200];
+    
+    clearLineArray(internal);
+    
+    while (in[locationIn]) {
+        if (alphaSet != remainingValues(in[locationIn]))
+        {
+            if (alphaSet) {
+                if (globalFound(internal)){
+                    printf("$");
+                    somethingHasChanged = 1;
+                }
+            }
+            printf("%s", internal);
+
+            alphaSet = firstValue(in[locationIn]);
+            locationInternal = 0;
+            clearLineArray(internal);
+        }
+        internal[locationInternal] = in[locationIn];
+        locationIn++;
+        locationInternal++;
+    }
+    if (alphaSet) {
+        if (globalFound(internal)){
+            printf("$");
+            somethingHasChanged = 1;
+        }
+    }
+    printf("%s\n", internal);
+    return somethingHasChanged;
 }
 
 int lineCompare(char * line, char * checkFor) {
@@ -1011,6 +1054,27 @@ void getClassName(char * java, char * className) {
     } while (java[loop] != '.');
 }
 
+#if 0
+
+int main(int argc, const char * argv[]) {
+    
+    char line[200] = "general = two_psi + 350 + incrementer";
+    char newLine[200] = {0};
+    
+    clearGlobals();
+    addGlobal("incrementer");
+    addGlobal("two_psi");
+    
+    if (parseStringForGlobals(line, newLine)) {
+        printf("%s\n", newLine);
+    } else {
+        printf("nothing changed!\n");
+    }
+
+    return 0;
+}
+
+#else
 
 int main(int argc, const char * argv[]) {
     char* python = 0L;
@@ -1062,3 +1126,5 @@ int main(int argc, const char * argv[]) {
     }
     return 0;
 }
+
+#endif
