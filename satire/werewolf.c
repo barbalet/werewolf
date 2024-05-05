@@ -140,6 +140,17 @@ int copyUntilZero(char * in, char * out) {
     return loop;
 }
 
+int combineStrings(int inLocation, char * in, char * add) {
+    int localLocation = inLocation;
+    int outLocation = 0;
+    while (add[outLocation]) {
+        in[localLocation] = add[outLocation];
+        localLocation++;
+        outLocation++;
+    }
+    return localLocation;
+}
+
 int parseStringForGlobals(char * in, char * out) {
     int somethingHasChanged = 0;
     int locationIn = 0;
@@ -147,6 +158,7 @@ int parseStringForGlobals(char * in, char * out) {
     int locationOut = 0;
     int alphaSet = firstValue(in[0]);
     char internal[LINELENGTH];
+    int outLocation = 0;
     
     clearLineArray(internal);
     
@@ -155,11 +167,12 @@ int parseStringForGlobals(char * in, char * out) {
         {
             if (alphaSet) {
                 if (globalFound(internal)){
-                    printf("$");
+                    outLocation = combineStrings(outLocation, out, "$");
                     somethingHasChanged = 1;
                 }
             }
-            printf("%s", internal);
+            outLocation = combineStrings(outLocation, out, internal);
+
 
             alphaSet = firstValue(in[locationIn]);
             locationInternal = 0;
@@ -171,11 +184,13 @@ int parseStringForGlobals(char * in, char * out) {
     }
     if (alphaSet) {
         if (globalFound(internal)){
-            printf("$");
+            outLocation = combineStrings(outLocation, out, "$");
             somethingHasChanged = 1;
         }
     }
-    printf("%s\n", internal);
+    outLocation = combineStrings(outLocation, out, internal);
+    outLocation = combineStrings(outLocation, out, "\n");
+
     return somethingHasChanged;
 }
 
@@ -1065,6 +1080,8 @@ int main(int argc, const char * argv[]) {
     clearGlobals();
     addGlobal("incrementer");
     addGlobal("two_psi");
+    
+    printf("%s\n", line);
     
     if (parseStringForGlobals(line, newLine)) {
         printf("%s\n", newLine);
