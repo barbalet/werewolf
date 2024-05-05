@@ -36,10 +36,6 @@
 #include <stdio.h>
 
 #define LINELENGTH  (200)
-// Ruby is still a work in progress. The aim is to get satire.c to get to satire.rb and then
-// work on the global requirements of satireArray and satireReal. When it is fully supported the
-// README.md will be updated.
-
 
 // This should be dynamic in the future. For now a fixed number
 unsigned long globals[LINELENGTH];
@@ -111,7 +107,6 @@ int globalFound(char * key) {
 
 void addGlobal(char* key) {
     unsigned long hash = mathHashFnv(key);
-    printf("Global added %s\n", key);
     globals[numberGlobals] = hash;
     numberGlobals++;
 }
@@ -570,14 +565,16 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "const int ")) {
         removeReplace(line, newLine, "const int ", 0L);
-        
-        addGlobal(newLine);
-        
+        if (beforeFunctions) {
+            addGlobal(newLine);
+        }
         return 2;
     }
     if (lineCompare(line, "const float ")) {
         removeReplace(line, newLine, "const float ", 0L);
-        addGlobal(newLine);
+        if (beforeFunctions) {
+            addGlobal(newLine);
+        }
         return 2;
     }
     
@@ -606,7 +603,9 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
 
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
-                addGlobal(array);
+                if (beforeFunctions) {
+                    addGlobal(array);
+                }
                 return 2;
             } else {
                 char tempLine[LINELENGTH] = {0};
@@ -614,7 +613,9 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", ")");
-                //addGlobal(line);
+                if (beforeFunctions) {
+                    addGlobal(tempLine2);
+                }
                 return 2;
             }
         }
@@ -644,7 +645,9 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
-                addGlobal(array);
+                if (beforeFunctions) {
+                    addGlobal(array);
+                }
                 return 2;
             } else {
                 char tempLine[LINELENGTH] = {0};
@@ -652,7 +655,9 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", ")");
-                //addGlobal(newLine);
+                if (beforeFunctions) {
+                    addGlobal(tempLine2);
+                }
                 return 2;
             }
 
@@ -1116,7 +1121,7 @@ int main(int argc, const char * argv[]) {
         }
         
         if (ruby) {
-            printf("ruby WIP : %s\n", ruby);
+            printf("ruby : %s\n", ruby);
         }
 
         if (java) {
