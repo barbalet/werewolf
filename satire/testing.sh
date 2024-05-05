@@ -56,6 +56,16 @@ cp satireReal.js testing/satireReal.js
 cp satireReal.py testing/satireReal.py
 cp satireReal.java testing/satireReal.java
 
+rm ww
+
+rm land.js
+rm land.py
+rm land.java
+
+rm satireReal.js
+rm satireReal.py
+rm satireReal.java
+
 cd testing
 
 diff satireReal.js satireReal_compare.js
@@ -68,3 +78,12 @@ echo "--- land.py ---"
 diff land.py land_compare.py
 echo "--- land.js ---"
 diff land.js land_compare.js
+
+rm land.js
+rm land.py
+rm land.java
+
+rm satireReal.js
+rm satireReal.py
+rm satireReal.java
+

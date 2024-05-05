@@ -35,13 +35,14 @@
 
 #include <stdio.h>
 
+#define LINELENGTH  (200)
 // Ruby is still a work in progress. The aim is to get satire.c to get to satire.rb and then
 // work on the global requirements of satireArray and satireReal. When it is fully supported the
 // README.md will be updated.
 
 
 // This should be dynamic in the future. For now a fixed number
-unsigned long globals[200];
+unsigned long globals[LINELENGTH];
 unsigned long numberGlobals;
 
 typedef int ( fileHandler )(char * line, char * newLine, int tabs, int noPrint);
@@ -53,7 +54,7 @@ int beforeFunctions = 1;
 
 void clearGlobals() {
     int loop = 0;
-    while (loop < 200) {
+    while (loop < LINELENGTH) {
         globals[loop] = 0;
         loop++;
     }
@@ -96,7 +97,7 @@ int globalFound(char * key) {
         return 0;
     }
     int loop = 0;
-    while (loop < 200) {
+    while (loop < LINELENGTH) {
         unsigned long localHash = globals[loop];
         if (localHash != 0) {
             if (hash == localHash) {
@@ -117,14 +118,14 @@ void addGlobal(char* key) {
 
 void clearLineArray(char * data) {
     int loop = 0;
-    while (loop < 200) {
+    while (loop < LINELENGTH) {
         data[loop++] = 0;
     }
 }
 
 void copyLineArray(char * dataTo, char * dataFrom) {
     int loop = 0;
-    while (loop < 200) {
+    while (loop < LINELENGTH) {
         dataTo[loop] = dataFrom[loop];
         loop++;
     }
@@ -145,7 +146,7 @@ int parseStringForGlobals(char * in, char * out) {
     int locationInternal = 0;
     int locationOut = 0;
     int alphaSet = firstValue(in[0]);
-    char internal[200];
+    char internal[LINELENGTH];
     
     clearLineArray(internal);
     
@@ -345,11 +346,11 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
             return 0;
         }
         
-        char tempLine[200] = {0};
+        char tempLine[LINELENGTH] = {0};
 
         if (containsValue(line,'%')) {
-            char tempLine2[200] = {0};
-            char tempLine3[200] = {0};
+            char tempLine2[LINELENGTH] = {0};
+            char tempLine3[LINELENGTH] = {0};
             removeReplace(line, tempLine, "printf(", "print(");
             removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
             removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
@@ -387,9 +388,9 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
     
     if (lineCompare(line, "int")) {
         if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
-            char tempLine2[200] = {0};
-            char tempLine3[200] = {0};
+            char tempLine[LINELENGTH] = {0};
+            char tempLine2[LINELENGTH] = {0};
+            char tempLine3[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -404,16 +405,16 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
 
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
 
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = [0] * %s", array, number);
                 return 2;
             } else {
-                char tempLine[200] = {0};
-                char tempLine2[200] = {0};
+                char tempLine[LINELENGTH] = {0};
+                char tempLine2[LINELENGTH] = {0};
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", "):");
@@ -424,9 +425,9 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "float")) {
         if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
-            char tempLine2[200] = {0};
-            char tempLine3[200] = {0};
+            char tempLine[LINELENGTH] = {0};
+            char tempLine2[LINELENGTH] = {0};
+            char tempLine3[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -441,15 +442,15 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
             return 2;
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = [0] * %s", array, number);
                 return 2;
             } else {
-                char tempLine[200] = {0};
-                char tempLine2[200] = {0};
+                char tempLine[LINELENGTH] = {0};
+                char tempLine2[LINELENGTH] = {0};
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", "):");
@@ -462,9 +463,9 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
     
     
     if (lineCompare(line, "void")) {
-        char tempLine[200] = {0};
-        char temp2Line[200] = {0};
-        char temp3Line[200] = {0};
+        char tempLine[LINELENGTH] = {0};
+        char temp2Line[LINELENGTH] = {0};
+        char temp3Line[LINELENGTH] = {0};
         
         beforeFunctions = 0;
 
@@ -504,12 +505,12 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
             return 0;
         }
         
-        char tempLine[200] = {0};
-        char tempLine2[200] = {0};
+        char tempLine[LINELENGTH] = {0};
+        char tempLine2[LINELENGTH] = {0};
 
         if (containsValue(line,'%')) {
-            char tempLine3[200] = {0};
-            char tempLine4[200] = {0};
+            char tempLine3[LINELENGTH] = {0};
+            char tempLine4[LINELENGTH] = {0};
             removeReplace(line, tempLine, "printf(", "puts ");
             removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
             removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
@@ -554,9 +555,9 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     
     if (lineCompare(line, "int")) {
         if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
-            char tempLine2[200] = {0};
-            char tempLine3[200] = {0};
+            char tempLine[LINELENGTH] = {0};
+            char tempLine2[LINELENGTH] = {0};
+            char tempLine3[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -571,16 +572,16 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
 
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
 
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
                 return 2;
             } else {
-                char tempLine[200] = {0};
-                char tempLine2[200] = {0};
+                char tempLine[LINELENGTH] = {0};
+                char tempLine2[LINELENGTH] = {0};
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", ")");
@@ -591,9 +592,9 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "float")) {
         if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
-            char tempLine2[200] = {0};
-            char tempLine3[200] = {0};
+            char tempLine[LINELENGTH] = {0};
+            char tempLine2[LINELENGTH] = {0};
+            char tempLine3[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -608,15 +609,15 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
             return 2;
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "%s = Array.new(%s)", array, number);
                 return 2;
             } else {
-                char tempLine[200] = {0};
-                char tempLine2[200] = {0};
+                char tempLine[LINELENGTH] = {0};
+                char tempLine2[LINELENGTH] = {0};
                 removeReplace(line, tempLine, "int ", 0L);
                 removeReplace(tempLine, tempLine2, "float ", 0L);
                 removeReplace(tempLine2, newLine, ") {", ")");
@@ -629,9 +630,9 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     
     
     if (lineCompare(line, "void")) {
-        char tempLine[200] = {0};
-        char temp2Line[200] = {0};
-        char temp3Line[200] = {0};
+        char tempLine[LINELENGTH] = {0};
+        char temp2Line[LINELENGTH] = {0};
+        char temp3Line[LINELENGTH] = {0};
         
         beforeFunctions = 0;
 
@@ -672,11 +673,11 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
         if (noPrint) {
             return 0;
         }
-        char tempLine[200] = {0};
+        char tempLine[LINELENGTH] = {0};
 
         if (containsValue(line,'%')) {
-            char tempLine2[200] = {0};
-            char tempLine3[200] = {0};
+            char tempLine2[LINELENGTH] = {0};
+            char tempLine3[LINELENGTH] = {0};
             removeReplace(line, tempLine, "printf(", "System.out.println(");
             removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
             removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
@@ -721,9 +722,9 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
             return 2;
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 if (beforeFunctions) {
                     sprintf(newLine, "public static %s[] %s = new %s[%s];", type, array, type, number);
@@ -748,9 +749,9 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
             return 2;
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 if (beforeFunctions) {
                     sprintf(newLine, "public static %s[] %s = new %s[%s];", type, array, type, number);
@@ -802,9 +803,9 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
             return 0;
         }
         
-        char tempLine[200] = {0};
-        char tempLine2[200] = {0};
-        char tempLine3[200] = {0};
+        char tempLine[LINELENGTH] = {0};
+        char tempLine2[LINELENGTH] = {0};
+        char tempLine3[LINELENGTH] = {0};
 
         removeReplace(line, tempLine, "printf(", "console.log(");
         removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
@@ -835,7 +836,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     }
     if (lineCompare(line, "const"))
     {
-        char tempLine[200] = {0};
+        char tempLine[LINELENGTH] = {0};
         removeReplace(line, tempLine, "float ", 0L);
         removeReplace(tempLine, newLine, "int ", 0L);
         return 2;
@@ -843,7 +844,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     if (lineCompare(line, "int"))
     {
         if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
+            char tempLine[LINELENGTH] = {0};
             
             beforeFunctions = 0;
             
@@ -855,14 +856,14 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
             removeReplace(tempLine, newLine, "int ", 0L);
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "var %s = [%s];", array, number);
             } else {
                 int loop = 0;
-                while (loop < 200) {
+                while (loop < LINELENGTH) {
                     newLine[loop] = line[loop];
                     loop++;
                 }
@@ -876,8 +877,8 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     if (lineCompare(line, "float"))
     {
         if (containsValue(line, '(')) {
-            char tempLine[200] = {0};
-            char tempLine2[200] = {0};
+            char tempLine[LINELENGTH] = {0};
+            char tempLine2[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -890,9 +891,9 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
             removeReplace(tempLine2, newLine, "float ", 0L);
         } else {
             if (containsValue(line, '[')) {
-                char array[200] = {0};
-                char number[200] = {0};
-                char type[200] = {0};
+                char array[LINELENGTH] = {0};
+                char number[LINELENGTH] = {0};
+                char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
                 sprintf(newLine, "var %s = [%s];", array, number);
             } else {
@@ -903,8 +904,8 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     }
     if (lineCompare(line, "void"))
     {
-        char tempLine[200] = {0};
-        char tempLine2[200] = {0};
+        char tempLine[LINELENGTH] = {0};
+        char tempLine2[LINELENGTH] = {0};
 
         beforeFunctions = 0;
         
@@ -920,7 +921,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
 void translateFile(char* filename, char* writefilename, int noPrint, fileHandler * fileHander, char * className, openEndFile * openEnd) {
     int tabs;
     int loop = 0;
-    char lineArray[200];
+    char lineArray[LINELENGTH];
     int lineArrayFound = 0;
     
     FILE* reading = fopen(filename, "rb");
@@ -962,7 +963,7 @@ void translateFile(char* filename, char* writefilename, int noPrint, fileHandler
             }
             
             if (lineArrayFound) {
-                char newLine[200];
+                char newLine[LINELENGTH];
                 int value = (*fileHander)(lineArray, newLine, tabs, noPrint);
                 
                 if (writing) {
@@ -1058,8 +1059,8 @@ void getClassName(char * java, char * className) {
 
 int main(int argc, const char * argv[]) {
     
-    char line[200] = "general = two_psi + 350 + incrementer";
-    char newLine[200] = {0};
+    char line[LINELENGTH] = "general = two_psi + 350 + incrementer";
+    char newLine[LINELENGTH] = {0};
     
     clearGlobals();
     addGlobal("incrementer");
@@ -1082,7 +1083,7 @@ int main(int argc, const char * argv[]) {
     char* csource = 0;
     char* java = 0L;
     char* ruby = 0L;
-    char className[200] = {0};
+    char className[LINELENGTH] = {0};
 
     int noPrint;
     if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &ruby, &noPrint)) {
