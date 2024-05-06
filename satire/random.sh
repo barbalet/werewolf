@@ -30,11 +30,11 @@
 #   13 June 1996. No apes or cats were harmed in the writing of
 #   this software.
 
-echo "--- ggcc generated code ---"
+echo "--- werewolf generated code ---"
 
 cc werewolf.c -o ww
 
-./ww random.c -js random.js -p random.py -j random.java
+./ww random.c -js random.js -p random.py -j random.java -r random.rb
 
 cc random.c -o random
 
@@ -42,19 +42,22 @@ cc random.c -o random
 
 rm random
 
-echo "--- ggcc compile javasscipt code ---"
+echo "--- werewolf compile javasscipt code ---"
 
 node random.js
 
-echo "--- ggcc compile python code ---"
+echo "--- werewolf compile python code ---"
 
 python random.py
 
-echo "--- ggcc compile java code ---"
+echo "--- werewolf compile java code ---"
 
 javac random.java
 java random
 
 rm random.class
 
+echo "--- werewolf compile ruby code ---"
+
+ruby random.rb
 

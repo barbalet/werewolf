@@ -34,6 +34,9 @@
 ****************************************************************/
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define LINELENGTH  (200)
 
@@ -1061,6 +1064,14 @@ int parseArgs(int argc, const char * argv[], char** csource, char** python, char
     while (loop < argc) {
         const char* row = argv[loop];
         if (row[0] == '-') {
+            if (row[1] == 'h') {
+                printf("Usage: ./ww csourcefile [-js javascriptout | -j javaout | -p pythonout | -r rubyout]\n");
+            }
+            
+            if (row[1] == 'v') {
+                printf("v1.00.00\n");
+            }
+            
             if (row[1] == 'j' && row[2] == 's') {
                 loop++;
                 *javascript = (char*)argv[loop];
