@@ -34,7 +34,7 @@ echo "--- check code ---"
 
 cc werewolf.c -o ww
 
-./ww land.c -p land.py -j land.java -js land.js
+./ww land.c -p land.py -j land.java -js land.js -r land.rb
 ./ww satireReal.c -js satireReal.js -p satireReal.py -j satireReal.java -r satireReal.rb
 
 cc land.c -o land
@@ -51,6 +51,7 @@ echo "--- copy code ---"
 cp land.js testing/land.js
 cp land.py testing/land.py
 cp land.java testing/land.java
+cp land.rb testing/land.rb
 
 cp satireReal.js testing/satireReal.js
 cp satireReal.py testing/satireReal.py
@@ -62,6 +63,7 @@ rm ww
 rm land.js
 rm land.py
 rm land.java
+rm land.rb
 
 rm satireReal.js
 rm satireReal.py
@@ -81,10 +83,13 @@ echo "--- land.py ---"
 diff land.py land_compare.py
 echo "--- land.js ---"
 diff land.js land_compare.js
+echo "--- land.rb ---"
+diff land.rb land_compare.rb
 
 rm land.js
 rm land.py
 rm land.java
+rm land.rb
 
 rm satireReal.js
 rm satireReal.py
