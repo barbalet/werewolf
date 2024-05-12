@@ -479,9 +479,12 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
         char temp2Line[LINELENGTH] = {0};
         char temp3Line[LINELENGTH] = {0};
         
+        line[1] = 'i';
+        line[2] = 'z';
+
         beforeFunctions = 0;
 
-        removeReplace(line, tempLine, "void", "def");
+        removeReplace(line, tempLine, "vizd", "def");
         removeReplace(tempLine, temp2Line, "int ", 0L);
         removeReplace(temp2Line, temp3Line, "float ", 0L);
         removeReplace(temp3Line, newLine, ") {", "):");
@@ -673,10 +676,13 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
         char tempLine[LINELENGTH] = {0};
         char temp2Line[LINELENGTH] = {0};
         char temp3Line[LINELENGTH] = {0};
-        
+                
+        line[1] = 'i';
+        line[2] = 'z';
+
         beforeFunctions = 0;
 
-        removeReplace(line, tempLine, "void", "def");
+        removeReplace(line, tempLine, "vizd", "def");
         removeReplace(tempLine, temp2Line, "int ", 0L);
         removeReplace(temp2Line, temp3Line, "float ", 0L);
         removeReplace(temp3Line, newLine, ") {", ")");
@@ -805,9 +811,12 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "void"))
     {
+        line[1] = 'i';
+        line[2] = 'z';
+
         beforeFunctions = 0;
 
-        removeReplace(line, newLine, "void ", "static void ");
+        removeReplace(line, newLine, "vizd ", "static void ");
         return 2;
     }
     return 1;
@@ -947,9 +956,12 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
         char tempLine[LINELENGTH] = {0};
         char tempLine2[LINELENGTH] = {0};
 
+        line[1] = 'i';
+        line[2] = 'z';
+        
         beforeFunctions = 0;
         
-        removeReplace(line, tempLine, "void", "function");
+        removeReplace(line, tempLine, "vizd", "function");
         removeReplace(tempLine, tempLine2, "int ", 0L);
         removeReplace(tempLine2, newLine, "float ", 0L);
         return 2;
