@@ -30,11 +30,11 @@
 #   13 June 1996. No apes or cats were harmed in the writing of
 #   this software.
 
-echo "--- ggcc generated code ---"
+echo "--- werewolf generated code ---"
 
 cc werewolf.c -o ww
 
-./ww land.c -js land.js -p land.py -j land.java
+./ww land.c -js land.js -p land.py -j land.java -r land.rb
 
 cc land.c -o land
 
@@ -42,19 +42,21 @@ cc land.c -o land
 
 rm land
 
-echo "--- ggcc compile javasscipt code ---"
+echo "--- werewolf compile javasscipt code ---"
 
 node land.js
 
-echo "--- ggcc compile python code ---"
+echo "--- werewolf compile python code ---"
 
 python land.py
 
-echo "--- ggcc compile java code ---"
+echo "--- werewolf compile java code ---"
 
 javac land.java
 java land
 
 rm land.class
 
+echo "--- werewolf compile ruby code ---"
 
+ruby land.rb

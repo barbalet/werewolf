@@ -11,7 +11,7 @@ var radiusValue = [5];
 
 // This is a comment
 
-function findRadius(centerX, centerY, radius, pointX, pointY) {  
+function findRadius(centerX, centerY, radius, pointX, pointY) {   
 	var multiX = centerX - pointX;
 	var multiY = centerY - pointY;
 	var multiXY = 0;
@@ -22,13 +22,13 @@ function findRadius(centerX, centerY, radius, pointX, pointY) {
 	return 1;
 }
 
-function areaOperator(findX, findY, loop) {   
+function areaOperator(findX, findY, loop) {    
 	var valueOut = 0; 
 	valueOut = (TWO_PI * loop) / ((findX * findX) + (findY * findY));
 	return valueOut;
 }
 
-function partialFind(centerX, centerY, radius) {   
+function partialFind(centerX, centerY, radius) {    
 	var loop = 0;
 	var localRadius = [5];
 	var localFloat = [5];

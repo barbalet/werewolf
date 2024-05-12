@@ -38,7 +38,7 @@ public class land {
 	
 	public static int[] topography = new int[2 * 512 * 512];
 	
-	static int math_random() { 
+	static int math_random() {  
 		int tmp0 = 0;
 		int tmp1 = 0;
 		int runIt = 1;
@@ -67,7 +67,7 @@ public class land {
 		return genetics[1];
 	}
 	
-	static int tiles_non_planet( int lx, int ly ) { 
+	static int tiles_non_planet( int lx, int ly ) {  
 		int converted_x = 0;
 		int converted_y = 0;
 		converted_x = ( lx + MAP_DIMENSION ) & ( MAP_DIMENSION - 1 );
@@ -75,15 +75,15 @@ public class land {
 		return ( converted_x | ( converted_y * MAP_DIMENSION ) );
 	}
 	
-	static int tiles_topography( int buffer, int lx, int ly ) { 
+	static int tiles_topography( int buffer, int lx, int ly ) {  
 		return topography[(buffer * 512 * 512) + tiles_non_planet( lx, ly )];
 	}
 	
-	static void tiles_set_topography( int buffer, int lx, int ly, int value ) { 
+	static void tiles_set_topography( int buffer, int lx, int ly, int value ) {  
 		topography[(buffer * 512 * 512) + tiles_non_planet( lx, ly )] = value;
 	}
 	
-	static void tiles_swap_topography() { 
+	static void tiles_swap_topography() {  
 		int loop = 0;
 		while (loop < (512 * 512)) {
 			topography[(512 * 512) + loop] = topography[loop];
@@ -91,7 +91,7 @@ public class land {
 		}
 	}
 	
-	static void title_pack_topography() { 
+	static void title_pack_topography() {  
 		int loop = 0;
 		while (loop < (512 * 512)) {
 			topography[loop] = 128;
@@ -99,7 +99,7 @@ public class land {
 		}
 	}
 	
-	static void tile_round() { 
+	static void tile_round() {  
 		int local_tile_dimension = 1 << 9;
 		int span_minor = 0;
 		while ( span_minor < 6 ) {
@@ -126,7 +126,7 @@ public class land {
 		}
 	}
 	
-	static void tile_patch( int refine ) { 
+	static void tile_patch( int refine ) {  
 		int local_tiles = 2;
 		int span_minor = 0;
 		int span_major = 0;
@@ -201,7 +201,7 @@ public class land {
 		}
 	}
 	
-	static void land_seed_genetics( int r1, int r2 ) { 
+	static void land_seed_genetics( int r1, int r2 ) {  
 		genetics[0] = r1;
 		genetics[1] = r2;
 	
@@ -216,7 +216,7 @@ public class land {
 		genetics[1] = ( ( ( math_random() & 255 ) << 8 ) | ( math_random() & 255 ) );
 	}
 	
-	static void land_init() { 
+	static void land_init() {  
 		int refine = 0;
 		title_pack_topography();
 		while ( refine < 7 ) {

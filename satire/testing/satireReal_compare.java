@@ -12,7 +12,7 @@ public class satireReal {
 	
 	// This is a comment
 	
-	static int findRadius(int centerX, int centerY, int radius, int pointX, int pointY) { 
+	static int findRadius(int centerX, int centerY, int radius, int pointX, int pointY) {  
 		int multiX = centerX - pointX;
 		int multiY = centerY - pointY;
 		int multiXY = 0;
@@ -23,13 +23,13 @@ public class satireReal {
 		return 1;
 	}
 	
-	static float areaOperator(int findX, int findY, int loop) { 
+	static float areaOperator(int findX, int findY, int loop) {  
 		float valueOut = 0;
 		valueOut = (TWO_PI * loop) / ((findX * findX) + (findY * findY));
 		return valueOut;
 	}
 	
-	static void partialFind(int centerX, int centerY, int radius) { 
+	static void partialFind(int centerX, int centerY, int radius) {  
 		int loop = 0;
 		int[] localRadius = new int[5];
 		float[] localFloat = new float[5];

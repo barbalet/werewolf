@@ -11,7 +11,7 @@ $radiusValue = Array.new(5)
 
 #This is a comment  
 
-def findRadius(centerX, centerY, radius, pointX, pointY)     
+def findRadius(centerX, centerY, radius, pointX, pointY)      
 	multiX = centerX - pointX    
 	multiY = centerY - pointY    
 	multiXY = 0    
@@ -22,13 +22,13 @@ def findRadius(centerX, centerY, radius, pointX, pointY)
 	return 1 
 end  
 
-def areaOperator(findX, findY, loop)     
+def areaOperator(findX, findY, loop)      
 	valueOut = 0    
 	valueOut = ($TWO_PI * loop) / ((findX * findX) + (findY * findY)) 
 	return valueOut 
 end  
 
-def partialFind(centerX, centerY, radius)     
+def partialFind(centerX, centerY, radius)      
 	loop = 0    
 	localRadius = Array.new(5)
 	localFloat = Array.new(5)

@@ -37,7 +37,7 @@ var genetics = [2];
 
 var topography = [2 * 512 * 512];
 
-function math_random() {  
+function math_random() {   
 	var tmp0 = 0;
 	var tmp1 = 0;
 	var runIt = 1;
@@ -66,7 +66,7 @@ function math_random() {
 	return genetics[1];
 }
 
-function tiles_non_planet( lx, ly ) {  
+function tiles_non_planet( lx, ly ) {   
 	var converted_x = 0;
 	var converted_y = 0;
 	converted_x = ( lx + MAP_DIMENSION ) & ( MAP_DIMENSION - 1 );
@@ -74,15 +74,15 @@ function tiles_non_planet( lx, ly ) {
 	return ( converted_x | ( converted_y * MAP_DIMENSION ) );
 }
 
-function tiles_topography( buffer, lx, ly ) {  
+function tiles_topography( buffer, lx, ly ) {   
 	return topography[(buffer * 512 * 512) + tiles_non_planet( lx, ly )];
 }
 
-function tiles_set_topography( buffer, lx, ly, value ) {   
+function tiles_set_topography( buffer, lx, ly, value ) {    
 	topography[(buffer * 512 * 512) + tiles_non_planet( lx, ly )] = value;
 }
 
-function tiles_swap_topography() {   
+function tiles_swap_topography() {    
 	var loop = 0;
 	while (loop < (512 * 512)) {
 		topography[(512 * 512) + loop] = topography[loop];
@@ -90,7 +90,7 @@ function tiles_swap_topography() {
 	}
 }
 
-function title_pack_topography() {   
+function title_pack_topography() {    
 	var loop = 0;
 	while (loop < (512 * 512)) {
 		topography[loop] = 128;
@@ -98,7 +98,7 @@ function title_pack_topography() {
 	}
 }
 
-function tile_round() {   
+function tile_round() {    
 	var local_tile_dimension = 1 << 9;
 	var span_minor = 0;
 	while ( span_minor < 6 ) {
@@ -125,7 +125,7 @@ function tile_round() {
 	}
 }
 
-function tile_patch( refine ) {   
+function tile_patch( refine ) {    
 	var local_tiles = 2;
 	var span_minor = 0;
 	var span_major = 0;
@@ -200,7 +200,7 @@ function tile_patch( refine ) {
 	}
 }
 
-function land_seed_genetics( r1, r2 ) {   
+function land_seed_genetics( r1, r2 ) {    
 	genetics[0] = r1;
 	genetics[1] = r2;
 
@@ -215,7 +215,7 @@ function land_seed_genetics( r1, r2 ) {
 	genetics[1] = ( ( ( math_random() & 255 ) << 8 ) | ( math_random() & 255 ) );
 }
 
-function land_init() {   
+function land_init() {    
 	var refine = 0;
 	title_pack_topography();
 	while ( refine < 7 ) {

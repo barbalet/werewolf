@@ -11,7 +11,7 @@ radiusValue = [0] * 5
 
 #This is a comment  
 
-def findRadius(centerX, centerY, radius, pointX, pointY):     
+def findRadius(centerX, centerY, radius, pointX, pointY):      
 	multiX = centerX - pointX    
 	multiY = centerY - pointY    
 	multiXY = 0    
@@ -20,12 +20,12 @@ def findRadius(centerX, centerY, radius, pointX, pointY):
 		return 0 
 	return 1 
 
-def areaOperator(findX, findY, loop):     
+float areaOperator(int findX, int findY, int loop) { 
 	valueOut = 0    
 	valueOut = (TWO_PI * loop) / ((findX * findX) + (findY * findY)) 
 	return valueOut 
 
-def partialFind(centerX, centerY, radius):     
+def partialFind(centerX, centerY, radius):      
 	loop = 0    
 	localRadius = [0] * 5
 	localFloat = [0] * 5

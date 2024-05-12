@@ -403,6 +403,7 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
             char tempLine3[LINELENGTH] = {0};
+            char tempLine4[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -413,7 +414,8 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
             removeReplace(line, tempLine, "fnz", "def");
             removeReplace(tempLine, tempLine2, "float ", 0L);
             removeReplace(tempLine2, tempLine3, "int ", 0L);
-            removeReplace(tempLine3, newLine, ") {", "):");
+            removeReplace(tempLine3, tempLine4, "void", 0L);
+            removeReplace(tempLine4, newLine, ") {", "):");
 
         } else {
             if (containsValue(line, '[')) {
@@ -440,6 +442,7 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
             char tempLine3[LINELENGTH] = {0};
+            char tempLine4[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -450,7 +453,8 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
             removeReplace(line, tempLine, "fnzat ", "def ");
             removeReplace(tempLine, tempLine2, "float ", 0L);
             removeReplace(tempLine2, tempLine3, "int ", 0L);
-            removeReplace(tempLine3, newLine, ") {", "):");
+            removeReplace(tempLine4, tempLine4, "void", 0L);
+            removeReplace(tempLine4, newLine, ") {", "):");
             return 2;
         } else {
             if (containsValue(line, '[')) {
@@ -478,7 +482,8 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
         char tempLine[LINELENGTH] = {0};
         char temp2Line[LINELENGTH] = {0};
         char temp3Line[LINELENGTH] = {0};
-        
+        char temp4Line[LINELENGTH] = {0};
+
         line[1] = 'i';
         line[2] = 'z';
 
@@ -487,7 +492,8 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
         removeReplace(line, tempLine, "vizd", "def");
         removeReplace(tempLine, temp2Line, "int ", 0L);
         removeReplace(temp2Line, temp3Line, "float ", 0L);
-        removeReplace(temp3Line, newLine, ") {", "):");
+        removeReplace(temp3Line, temp4Line, "void", 0L);
+        removeReplace(temp4Line, newLine, ") {", "):");
     }
     return 2;
 }
@@ -589,6 +595,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
             char tempLine3[LINELENGTH] = {0};
+            char tempLine4[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -599,7 +606,8 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
             removeReplace(line, tempLine, "fnz", "def");
             removeReplace(tempLine, tempLine2, "float ", 0L);
             removeReplace(tempLine2, tempLine3, "int ", 0L);
-            removeReplace(tempLine3, newLine, ") {", ")");
+            removeReplace(tempLine3, tempLine4, "void", 0L);
+            removeReplace(tempLine4, newLine, ") {", ")");
 
         } else {
             if (containsValue(line, '[')) {
@@ -632,6 +640,7 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
             char tempLine3[LINELENGTH] = {0};
+            char tempLine4[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -642,7 +651,8 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
             removeReplace(line, tempLine, "fnzat ", "def ");
             removeReplace(tempLine, tempLine2, "float ", 0L);
             removeReplace(tempLine2, tempLine3, "int ", 0L);
-            removeReplace(tempLine3, newLine, ") {", ")");
+            removeReplace(tempLine3, tempLine4, "void", 0L);
+            removeReplace(tempLine4, newLine, ") {", ")");
             return 2;
         } else {
             if (containsValue(line, '[')) {
@@ -676,7 +686,8 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
         char tempLine[LINELENGTH] = {0};
         char temp2Line[LINELENGTH] = {0};
         char temp3Line[LINELENGTH] = {0};
-                
+        char temp4Line[LINELENGTH] = {0};
+
         line[1] = 'i';
         line[2] = 'z';
 
@@ -685,7 +696,8 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
         removeReplace(line, tempLine, "vizd", "def");
         removeReplace(tempLine, temp2Line, "int ", 0L);
         removeReplace(temp2Line, temp3Line, "float ", 0L);
-        removeReplace(temp3Line, newLine, ") {", ")");
+        removeReplace(temp3Line, temp4Line, "void", 0L);
+        removeReplace(temp4Line, newLine, ") {", ")");
     }
     return 2;
 }
@@ -757,14 +769,14 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "int")) {
         if (containsValue(line, '(')) {
-            
+            char tempLine2[LINELENGTH] = {0};
             beforeFunctions = 0;
 
             line[0] = 'f';
             line[1] = 'n';
             line[2] = 'z';
-            
-            removeReplace(line, newLine, "fnz ", "static int ");
+            removeReplace(line, tempLine2, "void", 0L);
+            removeReplace(tempLine2, newLine, "fnz ", "static int ");
             return 2;
         } else {
             if (containsValue(line, '[')) {
@@ -784,14 +796,16 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "float")) {
         if (containsValue(line, '(')) {
-            
+            char tempLine2[LINELENGTH] = {0};
+
             beforeFunctions = 0;
 
             line[0] = 'f';
             line[1] = 'n';
             line[2] = 'z';
             
-            removeReplace(line, newLine, "fnzat ", "static float ");
+            removeReplace(line, tempLine2, "void", 0L);
+            removeReplace(tempLine2, newLine, "fnzat ", "static float ");
             return 2;
         } else {
             if (containsValue(line, '[')) {
@@ -811,12 +825,14 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
     }
     if (lineCompare(line, "void"))
     {
+        char tempLine2[LINELENGTH] = {0};
         line[1] = 'i';
         line[2] = 'z';
 
         beforeFunctions = 0;
-
-        removeReplace(line, newLine, "vizd ", "static void ");
+        
+        removeReplace(line, tempLine2, "void", 0L);
+        removeReplace(tempLine2, newLine, "vizd ", "static void ");
         return 2;
     }
     return 1;
@@ -894,7 +910,8 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     {
         if (containsValue(line, '(')) {
             char tempLine[LINELENGTH] = {0};
-            
+            char tempLine2[LINELENGTH] = {0};
+
             beforeFunctions = 0;
             
             line[0] = 'f';
@@ -902,7 +919,8 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
             line[2] = 'z';
             
             removeReplace(line, tempLine, "fnz", "function");
-            removeReplace(tempLine, newLine, "int ", 0L);
+            removeReplace(tempLine, tempLine2, "void", 0L);
+            removeReplace(tempLine2, newLine, "int ", 0L);
         } else {
             if (containsValue(line, '[')) {
                 char array[LINELENGTH] = {0};
@@ -928,6 +946,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
         if (containsValue(line, '(')) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
+            char tempLine3[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -937,7 +956,8 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
             
             removeReplace(line, tempLine, "fnzat", "function");
             removeReplace(tempLine, tempLine2, "int ", 0L);
-            removeReplace(tempLine2, newLine, "float ", 0L);
+            removeReplace(tempLine2, tempLine3, "void", 0L);
+            removeReplace(tempLine3, newLine, "float ", 0L);
         } else {
             if (containsValue(line, '[')) {
                 char array[LINELENGTH] = {0};
@@ -955,6 +975,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     {
         char tempLine[LINELENGTH] = {0};
         char tempLine2[LINELENGTH] = {0};
+        char tempLine3[LINELENGTH] = {0};
 
         line[1] = 'i';
         line[2] = 'z';
@@ -963,7 +984,8 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
         
         removeReplace(line, tempLine, "vizd", "function");
         removeReplace(tempLine, tempLine2, "int ", 0L);
-        removeReplace(tempLine2, newLine, "float ", 0L);
+        removeReplace(tempLine2, tempLine3, "void", 0L);
+        removeReplace(tempLine3, newLine, "float ", 0L);
         return 2;
     }
     return 1;

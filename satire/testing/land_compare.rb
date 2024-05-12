@@ -37,7 +37,7 @@ $genetics = Array.new(2)
 
 $topography = Array.new(2 * 512 * 512)
 
-def math_random()     
+def math_random()      
 	tmp0 = 0    
 	tmp1 = 0    
 	runIt = 1    
@@ -66,7 +66,7 @@ def math_random()
 	return $genetics[1] 
 end  
 
-def tiles_non_planet( lx, ly )     
+def tiles_non_planet( lx, ly )      
 	converted_x = 0    
 	converted_y = 0    
 	converted_x = ( lx + $MAP_DIMENSION ) & ( $MAP_DIMENSION - 1 ) 
@@ -74,15 +74,15 @@ def tiles_non_planet( lx, ly )
 	return ( converted_x | ( converted_y * $MAP_DIMENSION ) ) 
 end  
 
-def tiles_topography( buffer, lx, ly )     
+def tiles_topography( buffer, lx, ly )      
 	return $topography[(buffer * 512 * 512) + tiles_non_planet( lx, ly )] 
 end  
 
-def tiles_set_topography( buffer, lx, ly, value )     
+def tiles_set_topography( buffer, lx, ly, value )      
 	$topography[(buffer * 512 * 512) + tiles_non_planet( lx, ly )] = value 
 end  
 
-def tiles_swap_topography()     
+def tiles_swap_topography()      
 	loop = 0    
 	while (loop < (512 * 512))   
 		$topography[(512 * 512) + loop] = $topography[loop] 
@@ -90,7 +90,7 @@ def tiles_swap_topography()
 	end  
 end  
 
-def title_pack_topography()     
+def title_pack_topography()      
 	loop = 0    
 	while (loop < (512 * 512))   
 		$topography[loop] = 128 
@@ -98,7 +98,7 @@ def title_pack_topography()
 	end  
 end  
 
-def tile_round()     
+def tile_round()      
 	local_tile_dimension = 1 << 9    
 	span_minor = 0    
 	while ( span_minor < 6 )   
@@ -125,7 +125,7 @@ def tile_round()
 	end  
 end  
 
-def tile_patch( refine )     
+def tile_patch( refine )      
 	local_tiles = 2    
 	span_minor = 0    
 	span_major = 0    
@@ -200,7 +200,7 @@ def tile_patch( refine )
 	end  
 end  
 
-def land_seed_genetics( r1, r2 )     
+def land_seed_genetics( r1, r2 )      
 	$genetics[0] = r1 
 	$genetics[1] = r2 
 
@@ -215,7 +215,7 @@ def land_seed_genetics( r1, r2 )
 	$genetics[1] = ( ( ( math_random() & 255 ) << 8 ) | ( math_random() & 255 ) ) 
 end  
 
-def land_init()     
+def land_init()      
 	refine = 0    
 	title_pack_topography() 
 	while ( refine < 7 )   

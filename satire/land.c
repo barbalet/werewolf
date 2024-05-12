@@ -38,7 +38,7 @@ int genetics[2];
 
 int topography[2 * 512 * 512];
 
-int math_random() {
+int math_random(void) {
 	int tmp0 = 0;
 	int tmp1 = 0;
 	int runIt = 1;
@@ -83,7 +83,7 @@ void tiles_set_topography( int buffer, int lx, int ly, int value ) {
 	topography[(buffer * 512 * 512) + tiles_non_planet( lx, ly )] = value;
 }
 
-void tiles_swap_topography() {
+void tiles_swap_topography(void) {
 	int loop = 0;
 	while (loop < (512 * 512)) {
 		topography[(512 * 512) + loop] = topography[loop];
@@ -91,7 +91,7 @@ void tiles_swap_topography() {
 	}
 }
 
-void title_pack_topography() {
+void title_pack_topography(void) {
 	int loop = 0;
 	while (loop < (512 * 512)) {
 		topography[loop] = 128;
@@ -99,7 +99,7 @@ void title_pack_topography() {
 	}
 }
 
-void tile_round() {
+void tile_round(void) {
 	int local_tile_dimension = 1 << 9;
 	int span_minor = 0;
 	while ( span_minor < 6 ) {
@@ -216,7 +216,7 @@ void land_seed_genetics( int r1, int r2 ) {
 	genetics[1] = ( ( ( math_random() & 255 ) << 8 ) | ( math_random() & 255 ) );
 }
 
-void land_init() {
+void land_init(void) {
 	int refine = 0;
 	title_pack_topography();
 	while ( refine < 7 ) {
