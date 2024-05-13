@@ -151,7 +151,6 @@ int parseStringForGlobals(char * in, char * out) {
     int somethingHasChanged = 0;
     int locationIn = 0;
     int locationInternal = 0;
-    int locationOut = 0;
     int alphaSet = firstValue(in[0]);
     char internal[LINELENGTH];
     int outLocation = 0;
@@ -184,7 +183,7 @@ int parseStringForGlobals(char * in, char * out) {
             somethingHasChanged = 1;
         }
     }
-    outLocation = combineStrings(outLocation, out, internal);
+    (void)combineStrings(outLocation, out, internal);
     return somethingHasChanged;
 }
 
