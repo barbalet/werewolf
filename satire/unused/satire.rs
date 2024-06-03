@@ -3,6 +3,7 @@
 
 const STARTING_X: i32 = 5;
 const STARTING_Y: i32 = 5;
+const INCREMENTER: i32  = 1;  
 
 // This is a comment
 
@@ -22,7 +23,7 @@ fn partial_find(center_x: i32, center_y: i32, radius: i32) {
         let radius_value = find_radius(center_x, center_y, radius, center_x - loop_count, center_y - loop_count);
         println!("Some command");
         println!("{}", radius_value);
-        loop_count += 1 + radius_value;
+        loop_count += INCREMENTER + radius_value;
     }
 }
 
