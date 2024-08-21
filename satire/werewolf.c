@@ -41,7 +41,7 @@
 unsigned long globals[LINELENGTH];
 unsigned long numberGlobals;
 
-// The globals are used for globals in ruby and mut in rust. Rust code coming soon.
+// The globals are used for globals in ruby.
 
 typedef int ( fileHandler )(char * line, char * newLine, int tabs, int noPrint);
 
@@ -838,30 +838,24 @@ int nothingToPrintJava(char * line, char * newLine, int tabs, int noPrint) {
 
 int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint) {
     
-    if (noPrint && !outOfMain)
-    {
+    if (noPrint && !outOfMain) {
         return 0;
     }
     
-    if (lineCompare(line, "#"))
-    {
+    if (lineCompare(line, "#")) {
         return 0;
     }
-    if (lineCompare(line, "int main"))
-    {
+    if (lineCompare(line, "int main")) {
         outOfMain = 0;
         return 0;
     }
-    if (lineCompare(line, "return"))
-    {
-        if (outOfMain)
-        {
+    if (lineCompare(line, "return")) {
+        if (outOfMain) {
             return 1;
         }
         return 0;
     }
-    if (lineCompare(line, "printf(\""))
-    {
+    if (lineCompare(line, "printf(\"")) {
         if (noPrint) {
             return 0;
         }
@@ -877,35 +871,28 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
         return 2;
     }
     
-    if (lineCompare(line, "//"))
-    {
+    if (lineCompare(line, "//")) {
         return 1;
     }
-    if (lineCompare(line, "if"))
-    {
+    if (lineCompare(line, "if")) {
         return 1;
     }
-    if (lineCompare(line, "}"))
-    {
-        if (outOfMain)
-        {
+    if (lineCompare(line, "}")) {
+        if (outOfMain) {
             return 1;
         }
         return 0;
     }
-    if (lineCompare(line, "while"))
-    {
+    if (lineCompare(line, "while")) {
         return 1;
     }
-    if (lineCompare(line, "const"))
-    {
+    if (lineCompare(line, "const")) {
         char tempLine[LINELENGTH] = {0};
         removeReplace(line, tempLine, "float ", 0L);
         removeReplace(tempLine, newLine, "int ", 0L);
         return 2;
     }
-    if (lineCompare(line, "int"))
-    {
+    if (lineCompare(line, "int")) {
         if (containsValue(line, '(')) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
@@ -939,8 +926,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
         }
         return 2;
     }
-    if (lineCompare(line, "float"))
-    {
+    if (lineCompare(line, "float")) {
         if (containsValue(line, '(')) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
@@ -969,161 +955,7 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
         }
         return 2;
     }
-    if (lineCompare(line, "void"))
-    {
-        char tempLine[LINELENGTH] = {0};
-        char tempLine2[LINELENGTH] = {0};
-        char tempLine3[LINELENGTH] = {0};
-
-        line[1] = 'i';
-        line[2] = 'z';
-        
-        beforeFunctions = 0;
-        
-        removeReplace(line, tempLine, "vizd", "function");
-        removeReplace(tempLine, tempLine2, "int ", 0L);
-        removeReplace(tempLine2, tempLine3, "void", 0L);
-        removeReplace(tempLine3, newLine, "float ", 0L);
-        return 2;
-    }
-    return 1;
-}
-
-int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
-    
-    if (noPrint && !outOfMain)
-    {
-        return 0;
-    }
-    
-    if (lineCompare(line, "#"))
-    {
-        return 0;
-    }
-    if (lineCompare(line, "int main"))
-    {
-        outOfMain = 0;
-        return 0;
-    }
-    if (lineCompare(line, "return"))
-    {
-        if (outOfMain)
-        {
-            return 1;
-        }
-        return 0;
-    }
-    if (lineCompare(line, "printf(\""))
-    {
-        if (noPrint) {
-            return 0;
-        }
-        
-        char tempLine[LINELENGTH] = {0};
-        char tempLine2[LINELENGTH] = {0};
-        char tempLine3[LINELENGTH] = {0};
-
-        removeReplace(line, tempLine, "printf(", "console.log(");
-        removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
-        removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
-        removeReplace(tempLine3, newLine, "\\n", 0L);
-        return 2;
-    }
-    
-    if (lineCompare(line, "//"))
-    {
-        return 1;
-    }
-    if (lineCompare(line, "if"))
-    {
-        return 1;
-    }
-    if (lineCompare(line, "}"))
-    {
-        if (outOfMain)
-        {
-            return 1;
-        }
-        return 0;
-    }
-    if (lineCompare(line, "while"))
-    {
-        return 1;
-    }
-    if (lineCompare(line, "const"))
-    {
-        char tempLine[LINELENGTH] = {0};
-        removeReplace(line, tempLine, "float ", 0L);
-        removeReplace(tempLine, newLine, "int ", 0L);
-        return 2;
-    }
-    if (lineCompare(line, "int"))
-    {
-        if (containsValue(line, '(')) {
-            char tempLine[LINELENGTH] = {0};
-            char tempLine2[LINELENGTH] = {0};
-
-            beforeFunctions = 0;
-            
-            line[0] = 'f';
-            line[1] = 'n';
-            line[2] = 'z';
-            
-            removeReplace(line, tempLine, "fnz", "function");
-            removeReplace(tempLine, tempLine2, "void", 0L);
-            removeReplace(tempLine2, newLine, "int ", 0L);
-        } else {
-            if (containsValue(line, '[')) {
-                char array[LINELENGTH] = {0};
-                char number[LINELENGTH] = {0};
-                char type[LINELENGTH] = {0};
-                findVariableNumberArray(line, number, array, type);
-                sprintf(newLine, "var %s = [%s];", array, number);
-            } else {
-                int loop = 0;
-                while (loop < LINELENGTH) {
-                    newLine[loop] = line[loop];
-                    loop++;
-                }
-                newLine[0] = 'v';
-                newLine[1] = 'a';
-                newLine[2] = 'r';
-            }
-        }
-        return 2;
-    }
-    if (lineCompare(line, "float"))
-    {
-        if (containsValue(line, '(')) {
-            char tempLine[LINELENGTH] = {0};
-            char tempLine2[LINELENGTH] = {0};
-            char tempLine3[LINELENGTH] = {0};
-
-            beforeFunctions = 0;
-            
-            line[0] = 'f';
-            line[1] = 'n';
-            line[2] = 'z';
-            
-            removeReplace(line, tempLine, "fnzat", "function");
-            removeReplace(tempLine, tempLine2, "int ", 0L);
-            removeReplace(tempLine2, tempLine3, "void", 0L);
-            removeReplace(tempLine3, newLine, "float ", 0L);
-        } else {
-            if (containsValue(line, '[')) {
-                char array[LINELENGTH] = {0};
-                char number[LINELENGTH] = {0};
-                char type[LINELENGTH] = {0};
-                findVariableNumberArray(line, number, array, type);
-                sprintf(newLine, "var %s = [%s];", array, number);
-            } else {
-                removeReplace(line, newLine, "float ", "var ");
-            }
-        }
-        return 2;
-    }
-    if (lineCompare(line, "void"))
-    {
+    if (lineCompare(line, "void")) {
         char tempLine[LINELENGTH] = {0};
         char tempLine2[LINELENGTH] = {0};
         char tempLine3[LINELENGTH] = {0};
@@ -1240,7 +1072,7 @@ void translateFile(char* filename, char* writefilename, int noPrint, fileHandler
 }
 
 
-int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, char** ruby, char** rust, int * noPrint) {
+int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, char** ruby, int * noPrint) {
     int loop = 1;
     int returnValue = 0;
     
@@ -1254,7 +1086,7 @@ int parseArgs(int argc, const char * argv[], char** csource, char** python, char
             }
             
             if (row[1] == 'v') {
-                printf("v1.00.00\n");
+                printf("v1.00.00 (%s)\n", __DATE__);
             }
             
             if (row[1] == 'j' && row[2] == 's') {
@@ -1302,11 +1134,10 @@ int main(int argc, const char * argv[]) {
     char* csource = 0;
     char* java = 0L;
     char* ruby = 0L;
-    char* rust = 0L;
     char className[LINELENGTH] = {0};
 
     int noPrint;
-    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &ruby, &rust, &noPrint)) {
+    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &ruby, &noPrint)) {
         if (python) {
             printf("python : %s\n", python);
         }
@@ -1316,10 +1147,7 @@ int main(int argc, const char * argv[]) {
         if (javascript) {
             printf("javascript : %s\n", javascript);
         }
-        if (rust) {
-            printf("rust : %s\n", rust);
-        }
-        
+
         if (ruby) {
             printf("ruby : %s\n", ruby);
         }
@@ -1334,10 +1162,6 @@ int main(int argc, const char * argv[]) {
             printf("No Print ON\n");
         }
         
-        if (csource && rust) {
-            clearGlobals();
-            translateFile(csource, javascript, noPrint, &nothingToPrintRust, 0L, 0L, 0L);
-        }
         if (csource && javascript) {
             translateFile(csource, javascript, noPrint, &nothingToPrintJavaScript, 0L, 0L, 0L);
         }
