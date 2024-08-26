@@ -30,7 +30,7 @@
 #   13 June 1996. No apes or cats were harmed in the writing of
 #   this software.
 
-echo "--- ggcc generated code ---"
+echo "--- werewolf generated code ---"
 
 cc werewolf.c -o ww
 
@@ -50,7 +50,7 @@ rm satire
 rm satireArray
 rm satireReal
 
-echo "--- ggcc compile javascipt code ---"
+echo "--- werewolf compile javascipt code ---"
 
 node satire_new.js
 node satireArray_new.js
@@ -60,7 +60,7 @@ rm satire_new.js
 rm satireArray_new.js
 rm satireReal_new.js
 
-echo "--- ggcc compile python code ---"
+echo "--- werewolf compile python code ---"
 
 python satire_new.py
 python satireArray_new.py
@@ -70,7 +70,7 @@ rm satire_new.py
 rm satireArray_new.py
 rm satireReal_new.py
 
-echo "--- ggcc compile java code ---"
+echo "--- werewolf compile java code ---"
 
 javac satire_new.java
 java satire_new

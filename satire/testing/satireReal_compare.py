@@ -20,7 +20,7 @@ def findRadius(centerX, centerY, radius, pointX, pointY):
 		return 0 
 	return 1 
 
-float areaOperator(int findX, int findY, int loop) { 
+def areaOperator(findX, findY, loop):      
 	valueOut = 0    
 	valueOut = (TWO_PI * loop) / ((findX * findX) + (findY * findY)) 
 	return valueOut 

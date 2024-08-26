@@ -451,7 +451,7 @@ int nothingToPrintPython(char * line, char * newLine, int tabs, int noPrint) {
             removeReplace(line, tempLine, "fnzat ", "def ");
             removeReplace(tempLine, tempLine2, "float ", 0L);
             removeReplace(tempLine2, tempLine3, "int ", 0L);
-            removeReplace(tempLine4, tempLine4, "void", 0L);
+            removeReplace(tempLine3, tempLine4, "void", 0L);
             removeReplace(tempLine4, newLine, ") {", "):");
             return 2;
         } else {
