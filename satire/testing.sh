@@ -34,8 +34,8 @@ echo "--- check code ---"
 
 cc werewolf.c -o ww
 
-./ww land.c -p land.py -j land.java -js land.js -r land.rb
-./ww satireReal.c -js satireReal.js -p satireReal.py -j satireReal.java -r satireReal.rb
+./ww land.c -p land.py -j land.java -js land.js -rub land.rb
+./ww satireReal.c -js satireReal.js -p satireReal.py -j satireReal.java -rub satireReal.rb
 
 cc land.c -o land
 cc satireReal.c -o satireReal
