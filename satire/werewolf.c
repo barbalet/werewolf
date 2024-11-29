@@ -50,7 +50,7 @@ typedef void ( openEndFile )(FILE * file, int open, char * className);
 int outOfMain = 1;
 int beforeFunctions = 1;
 
-void clearGlobals() {
+void clearGlobals(void) {
     int loop = 0;
     while (loop < LINELENGTH) {
         globals[loop] = 0;
