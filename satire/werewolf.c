@@ -700,15 +700,6 @@ int nothingToPrintRuby(char * line, char * newLine, int tabs, int noPrint) {
     return 2;
 }
 
-int nothingToPrintRustPostProcess(char * line, char * newLine, int tabs, int noPrint) {
-    clearLineArray(newLine);
-    if (parseStringForGlobals(line, newLine)){
-        return 2;
-    } else {
-        return 0;
-    }
-}
-
 int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
     
     if (noPrint && !outOfMain) {
@@ -722,13 +713,8 @@ int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
         outOfMain = 0;
         return 0;
     }
-    
-    removeReplace(line, newLine, ";", 0L);
-    copyLineArray(line, newLine);
-        
     if (lineCompare(line, "return")) {
-        if (outOfMain)
-        {
+        if (outOfMain) {
             return 1;
         }
         return 0;
@@ -740,64 +726,40 @@ int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
         
         char tempLine[LINELENGTH] = {0};
         char tempLine2[LINELENGTH] = {0};
+        char tempLine3[LINELENGTH] = {0};
 
-        if (containsValue(line,'%')) {
-            char tempLine3[LINELENGTH] = {0};
-            char tempLine4[LINELENGTH] = {0};
-            removeReplace(line, tempLine, "printf(", "puts ");
-            removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
-            removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
-            removeReplace(tempLine3, tempLine4, ")", 0L);
-            removeReplace(tempLine4, newLine, "\\n", 0L);
-        } else {
-            removeReplace(line, tempLine, "printf(", "puts ");
-            removeReplace(tempLine, tempLine2, ")", 0L);
-            removeReplace(tempLine2, newLine, "\\n", 0L);
-        }
+        removeReplace(line, tempLine, "printf(", "console.log(");
+        removeReplace(tempLine, tempLine2, "\"%d\\n\", ", 0L);
+        removeReplace(tempLine2, tempLine3, "\"%f\\n\", ", 0L);
+        removeReplace(tempLine3, newLine, "\\n", 0L);
         return 2;
     }
     
     if (lineCompare(line, "//")) {
-        removeReplace(line, newLine, "// ", "#");
-        return 2;
+        return 1;
     }
     if (lineCompare(line, "if")) {
-        removeReplace(line, newLine, "{", 0L);
-        return 2;
+        return 1;
     }
     if (lineCompare(line, "}")) {
         if (outOfMain) {
-            removeReplace(line, newLine, "}", "end");
-        } else {
-            removeReplace(line, newLine, "}", 0L);
+            return 1;
         }
-        return 2;
+        return 0;
     }
     if (lineCompare(line, "while")) {
-        removeReplace(line, newLine, "{", 0L);
+        return 1;
+    }
+    if (lineCompare(line, "const")) {
+        char tempLine[LINELENGTH] = {0};
+        removeReplace(line, tempLine, "float ", 0L);
+        removeReplace(tempLine, newLine, "int ", 0L);
         return 2;
     }
-    if (lineCompare(line, "const int ")) {
-        removeReplace(line, newLine, "const int ", 0L);
-        if (beforeFunctions) {
-            addGlobal(newLine);
-        }
-        return 2;
-    }
-    if (lineCompare(line, "const float ")) {
-        removeReplace(line, newLine, "const float ", 0L);
-        if (beforeFunctions) {
-            addGlobal(newLine);
-        }
-        return 2;
-    }
-    
     if (lineCompare(line, "int")) {
         if (containsValue(line, '(')) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
-            char tempLine3[LINELENGTH] = {0};
-            char tempLine4[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -805,34 +767,25 @@ int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
             line[1] = 'n';
             line[2] = 'z';
             
-            removeReplace(line, tempLine, "fnz", "def");
-            removeReplace(tempLine, tempLine2, "float ", 0L);
-            removeReplace(tempLine2, tempLine3, "int ", 0L);
-            removeReplace(tempLine3, tempLine4, "void", 0L);
-            removeReplace(tempLine4, newLine, ") {", ")");
-
+            removeReplace(line, tempLine, "fnz", "function");
+            removeReplace(tempLine, tempLine2, "void", 0L);
+            removeReplace(tempLine2, newLine, "int ", 0L);
         } else {
             if (containsValue(line, '[')) {
                 char array[LINELENGTH] = {0};
                 char number[LINELENGTH] = {0};
                 char type[LINELENGTH] = {0};
-
                 findVariableNumberArray(line, number, array, type);
-                sprintf(newLine, "%s = Array.new(%s)", array, number);
-                if (beforeFunctions) {
-                    addGlobal(array);
-                }
-                return 2;
+                sprintf(newLine, "var %s = [%s];", array, number);
             } else {
-                char tempLine[LINELENGTH] = {0};
-                char tempLine2[LINELENGTH] = {0};
-                removeReplace(line, tempLine, "int ", 0L);
-                removeReplace(tempLine, tempLine2, "float ", 0L);
-                removeReplace(tempLine2, newLine, ") {", ")");
-                if (beforeFunctions) {
-                    addGlobal(tempLine2);
+                int loop = 0;
+                while (loop < LINELENGTH) {
+                    newLine[loop] = line[loop];
+                    loop++;
                 }
-                return 2;
+                newLine[0] = 'v';
+                newLine[1] = 'a';
+                newLine[2] = 'r';
             }
         }
         return 2;
@@ -842,7 +795,6 @@ int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
             char tempLine[LINELENGTH] = {0};
             char tempLine2[LINELENGTH] = {0};
             char tempLine3[LINELENGTH] = {0};
-            char tempLine4[LINELENGTH] = {0};
 
             beforeFunctions = 0;
             
@@ -850,58 +802,40 @@ int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
             line[1] = 'n';
             line[2] = 'z';
             
-            removeReplace(line, tempLine, "fnzat ", "def ");
-            removeReplace(tempLine, tempLine2, "float ", 0L);
-            removeReplace(tempLine2, tempLine3, "int ", 0L);
-            removeReplace(tempLine3, tempLine4, "void", 0L);
-            removeReplace(tempLine4, newLine, ") {", ")");
-            return 2;
+            removeReplace(line, tempLine, "fnzat", "function");
+            removeReplace(tempLine, tempLine2, "int ", 0L);
+            removeReplace(tempLine2, tempLine3, "void", 0L);
+            removeReplace(tempLine3, newLine, "float ", 0L);
         } else {
             if (containsValue(line, '[')) {
                 char array[LINELENGTH] = {0};
                 char number[LINELENGTH] = {0};
                 char type[LINELENGTH] = {0};
                 findVariableNumberArray(line, number, array, type);
-                sprintf(newLine, "%s = Array.new(%s)", array, number);
-                if (beforeFunctions) {
-                    addGlobal(array);
-                }
-                return 2;
+                sprintf(newLine, "var %s = [%s];", array, number);
             } else {
-                char tempLine[LINELENGTH] = {0};
-                char tempLine2[LINELENGTH] = {0};
-                removeReplace(line, tempLine, "int ", 0L);
-                removeReplace(tempLine, tempLine2, "float ", 0L);
-                removeReplace(tempLine2, newLine, ") {", ")");
-                if (beforeFunctions) {
-                    addGlobal(tempLine2);
-                }
-                return 2;
+                removeReplace(line, newLine, "float ", "var ");
             }
-
         }
         return 2;
     }
-    
-    
     if (lineCompare(line, "void")) {
         char tempLine[LINELENGTH] = {0};
-        char temp2Line[LINELENGTH] = {0};
-        char temp3Line[LINELENGTH] = {0};
-        char temp4Line[LINELENGTH] = {0};
+        char tempLine2[LINELENGTH] = {0};
+        char tempLine3[LINELENGTH] = {0};
 
         line[1] = 'i';
         line[2] = 'z';
-
+        
         beforeFunctions = 0;
-
-        removeReplace(line, tempLine, "vizd", "def");
-        removeReplace(tempLine, temp2Line, "int ", 0L);
-        removeReplace(temp2Line, temp3Line, "float ", 0L);
-        removeReplace(temp3Line, temp4Line, "void", 0L);
-        removeReplace(temp4Line, newLine, ") {", ")");
+        
+        removeReplace(line, tempLine, "vizd", "function");
+        removeReplace(tempLine, tempLine2, "int ", 0L);
+        removeReplace(tempLine2, tempLine3, "void", 0L);
+        removeReplace(tempLine3, newLine, "float ", 0L);
+        return 2;
     }
-    return 2;
+    return 1;
 }
 
 
@@ -1377,8 +1311,7 @@ int main(int argc, const char * argv[]) {
         }
         
         if (csource && rust) {
-            clearGlobals();
-            translateFile(csource, rust, noPrint, &nothingToPrintRust, &nothingToPrintRustPostProcess, 0L, 0L);
+            translateFile(csource, rust, noPrint, &nothingToPrintRust, 0L, 0L, 0L);
         }
         
         if (csource && javascript) {

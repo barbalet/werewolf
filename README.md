@@ -17,9 +17,9 @@ Inside the ``satire`` directory, compile werewolf.c:
 
 Then ``ww`` can be ran as follows:
 
-``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -r satire_new.rb`` generates the anticipated output files
+``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -rub satire_new.rb`` generates the anticipated output files
 
-``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -r satire_new.rb -n`` generates the anticipated output files without printing anything out the console or adding the main (which can be used for unit testing)
+``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -rub satire_new.rb -n`` generates the anticipated output files without printing anything out the console or adding the main (which can be used for unit testing)
 
 Alternatively also single languages can be used. For example if you only want Java output:
 
