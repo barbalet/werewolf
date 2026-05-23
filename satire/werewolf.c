@@ -936,6 +936,599 @@ int nothingToPrintJavaScript(char * line, char * newLine, int tabs, int noPrint)
     return 1;
 }
 
+unsigned long rustFloats[LINELENGTH];
+unsigned long numberRustFloats;
+
+void clearRustTypes(void) {
+    memset(rustFloats, 0, sizeof(rustFloats));
+    numberRustFloats = 0;
+}
+
+void addRustFloat(char* key) {
+    unsigned long hash = mathHashFnv(key);
+    rustFloats[numberRustFloats] = hash;
+    numberRustFloats++;
+}
+
+int rustFloatFound(char * key) {
+    unsigned long hash = mathHashFnv(key);
+    int loop = 0;
+    while (loop < LINELENGTH) {
+        unsigned long localHash = rustFloats[loop];
+        if (localHash != 0) {
+            if (hash == localHash) {
+                return 1;
+            }
+        }
+        loop++;
+    }
+    return 0;
+}
+
+static void trimCopy(char * dataTo, char * dataFrom) {
+    int start = 0;
+    int end = 0;
+    int loop = 0;
+
+    while (dataFrom[start] && isspace(dataFrom[start])) {
+        start++;
+    }
+    end = (int)strlen(dataFrom + start);
+    while ((end > 0) && isspace(dataFrom[start + end - 1])) {
+        end--;
+    }
+    while (loop < end) {
+        dataTo[loop] = dataFrom[start + loop];
+        loop++;
+    }
+    dataTo[loop] = 0;
+}
+
+static void rustCopyWithoutSemicolon(char * line, char * newLine) {
+    int loop = 0;
+    char tempLine[LINELENGTH] = {0};
+
+    while (line[loop] && line[loop] != ';') {
+        tempLine[loop] = line[loop];
+        loop++;
+    }
+    trimCopy(newLine, tempLine);
+}
+
+static void rustIdentifierName(char * name, char * newName) {
+    if (strcmp(name, "loop") == 0) {
+        strcpy(newName, "loopValue");
+    } else {
+        copyLineArray(newName, name);
+    }
+}
+
+static void rustReplaceIdentifiers(char * line, char * newLine) {
+    int location = 0;
+    int outLocation = 0;
+    int inString = 0;
+
+    while (line[location]) {
+        if (line[location] == '"' && (location == 0 || line[location - 1] != '\\')) {
+            inString = !inString;
+            newLine[outLocation++] = line[location++];
+        } else if (!inString && firstValue(line[location])) {
+            char identifier[LINELENGTH] = {0};
+            char rustIdentifier[LINELENGTH] = {0};
+            int idLocation = 0;
+            while (remainingValues(line[location])) {
+                identifier[idLocation++] = line[location++];
+            }
+            rustIdentifierName(identifier, rustIdentifier);
+            outLocation = combineStrings(outLocation, newLine, rustIdentifier);
+        } else {
+            newLine[outLocation++] = line[location++];
+        }
+    }
+    newLine[outLocation] = 0;
+}
+
+static void rustCastArrayIndexes(char * line, char * newLine) {
+    int location = 0;
+    int outLocation = 0;
+
+    while (line[location]) {
+        if (line[location] == '[') {
+            outLocation = combineStrings(outLocation, newLine, "[(");
+            location++;
+            while (line[location] && line[location] != ']') {
+                newLine[outLocation++] = line[location++];
+            }
+            outLocation = combineStrings(outLocation, newLine, ") as usize]");
+            if (line[location] == ']') {
+                location++;
+            }
+        } else {
+            newLine[outLocation++] = line[location++];
+        }
+    }
+    newLine[outLocation] = 0;
+}
+
+static void rustPrepareLine(char * line, char * newLine) {
+    char tempLine[LINELENGTH] = {0};
+
+    rustReplaceIdentifiers(line, tempLine);
+    rustCastArrayIndexes(tempLine, newLine);
+}
+
+static int rustLineContainsGlobal(char * line) {
+    int location = 0;
+    int inString = 0;
+
+    while (line[location]) {
+        if (line[location] == '"' && (location == 0 || line[location - 1] != '\\')) {
+            inString = !inString;
+            location++;
+        } else if (!inString && firstValue(line[location])) {
+            char identifier[LINELENGTH] = {0};
+            int idLocation = 0;
+            while (remainingValues(line[location])) {
+                identifier[idLocation++] = line[location++];
+            }
+            if (globalFound(identifier)) {
+                return 1;
+            }
+        } else {
+            location++;
+        }
+    }
+    return 0;
+}
+
+static void rustFinalizeStatement(char * line, char * newLine) {
+    char tempLine[LINELENGTH] = {0};
+
+    rustPrepareLine(line, tempLine);
+    if (!beforeFunctions && rustLineContainsGlobal(tempLine)) {
+        snprintf(newLine, LINELENGTH, "unsafe { %s }", tempLine);
+    } else {
+        copyLineArray(newLine, tempLine);
+    }
+}
+
+static void rustBuildParameters(char * line, char * newLine) {
+    int location = 0;
+    int outLocation = 0;
+
+    while (1) {
+        char parameter[LINELENGTH] = {0};
+        char trimmed[LINELENGTH] = {0};
+        char name[LINELENGTH] = {0};
+        char rustName[LINELENGTH] = {0};
+        char * rustType = 0L;
+        int parameterLocation = 0;
+
+        while (line[location] && line[location] != ',') {
+            parameter[parameterLocation++] = line[location++];
+        }
+        trimCopy(trimmed, parameter);
+
+        if (strcmp(trimmed, "void") != 0 && trimmed[0] != 0) {
+            if (strncmp(trimmed, "int ", 4) == 0) {
+                trimCopy(name, trimmed + 4);
+                rustType = "i32";
+            }
+            if (strncmp(trimmed, "float ", 6) == 0) {
+                trimCopy(name, trimmed + 6);
+                rustType = "f32";
+            }
+            if (rustType) {
+                rustIdentifierName(name, rustName);
+                if (outLocation != 0) {
+                    outLocation = combineStrings(outLocation, newLine, ", ");
+                }
+                outLocation = combineStrings(outLocation, newLine, rustName);
+                outLocation = combineStrings(outLocation, newLine, ": ");
+                outLocation = combineStrings(outLocation, newLine, rustType);
+                if (strcmp(rustType, "f32") == 0) {
+                    addRustFloat(rustName);
+                }
+            }
+        }
+
+        if (line[location] == 0) {
+            break;
+        }
+        location++;
+    }
+    newLine[outLocation] = 0;
+}
+
+static void rustBuildFunctionLine(char * line, char * newLine, char * cType, char * rustType) {
+    char * start = line + strlen(cType);
+    char * open = 0L;
+    char * close = 0L;
+    char functionName[LINELENGTH] = {0};
+    char trimmedFunctionName[LINELENGTH] = {0};
+    char rustFunctionName[LINELENGTH] = {0};
+    char parameters[LINELENGTH] = {0};
+    char rustParameters[LINELENGTH] = {0};
+    int loop = 0;
+    int nameLength = 0;
+    int parameterLength = 0;
+
+    while (*start == ' ') {
+        start++;
+    }
+
+    open = strchr(start, '(');
+    close = strrchr(start, ')');
+    if (!open || !close) {
+        copyLineArray(newLine, line);
+        return;
+    }
+
+    nameLength = (int)(open - start);
+    while (loop < nameLength) {
+        functionName[loop] = start[loop];
+        loop++;
+    }
+    trimCopy(trimmedFunctionName, functionName);
+    rustIdentifierName(trimmedFunctionName, rustFunctionName);
+
+    parameterLength = (int)(close - open - 1);
+    loop = 0;
+    while (loop < parameterLength) {
+        parameters[loop] = open[loop + 1];
+        loop++;
+    }
+    rustBuildParameters(parameters, rustParameters);
+
+    if (strcmp(rustFunctionName, "main") == 0) {
+        snprintf(newLine, LINELENGTH, "fn main() {");
+    } else if (rustType[0]) {
+        snprintf(newLine, LINELENGTH, "fn %s(%s) -> %s {", rustFunctionName, rustParameters, rustType);
+    } else {
+        snprintf(newLine, LINELENGTH, "fn %s(%s) {", rustFunctionName, rustParameters);
+    }
+}
+
+static int rustFloatExpressionIsDirectCall(char * line) {
+    int location = 0;
+    int depth = 0;
+
+    while (isspace(line[location])) {
+        location++;
+    }
+    if (!firstValue(line[location])) {
+        return 0;
+    }
+    while (remainingValues(line[location])) {
+        location++;
+    }
+    while (isspace(line[location])) {
+        location++;
+    }
+    if (line[location] != '(') {
+        return 0;
+    }
+    while (line[location]) {
+        if (line[location] == '(') {
+            depth++;
+        }
+        if (line[location] == ')') {
+            depth--;
+            if (depth == 0) {
+                location++;
+                while (isspace(line[location])) {
+                    location++;
+                }
+                return line[location] == 0;
+            }
+        }
+        location++;
+    }
+    return 0;
+}
+
+static void rustBuildFloatExpression(char * line, char * newLine) {
+    char renamedLine[LINELENGTH] = {0};
+    char tempLine[LINELENGTH] = {0};
+    int location = 0;
+    int outLocation = 0;
+
+    if (strcmp(line, "0") == 0) {
+        strcpy(newLine, "0.0");
+        return;
+    }
+    if (rustFloatExpressionIsDirectCall(line)) {
+        rustPrepareLine(line, newLine);
+        return;
+    }
+
+    rustReplaceIdentifiers(line, renamedLine);
+    while (renamedLine[location]) {
+        if (firstValue(renamedLine[location])) {
+            char identifier[LINELENGTH] = {0};
+            int idLocation = 0;
+            int nextLocation = 0;
+
+            while (remainingValues(renamedLine[location])) {
+                identifier[idLocation++] = renamedLine[location++];
+            }
+            nextLocation = location;
+            while (isspace(renamedLine[nextLocation])) {
+                nextLocation++;
+            }
+            outLocation = combineStrings(outLocation, tempLine, identifier);
+            if (renamedLine[nextLocation] != '(' && renamedLine[nextLocation] != '[') {
+                outLocation = combineStrings(outLocation, tempLine, " as f32");
+            }
+        } else if (isdigit(renamedLine[location])) {
+            int hasDecimal = 0;
+            while (isdigit(renamedLine[location]) || renamedLine[location] == '.') {
+                if (renamedLine[location] == '.') {
+                    hasDecimal = 1;
+                }
+                tempLine[outLocation++] = renamedLine[location++];
+            }
+            if (!hasDecimal) {
+                outLocation = combineStrings(outLocation, tempLine, " as f32");
+            }
+        } else {
+            tempLine[outLocation++] = renamedLine[location++];
+        }
+    }
+    rustCastArrayIndexes(tempLine, newLine);
+}
+
+static void rustBuildDeclarationLine(char * line, char * newLine, char * cType, char * rustType, int isConst) {
+    char sourceLine[LINELENGTH] = {0};
+    char statement[LINELENGTH] = {0};
+    char name[LINELENGTH] = {0};
+    char rustName[LINELENGTH] = {0};
+    char expression[LINELENGTH] = {0};
+    char rustExpression[LINELENGTH] = {0};
+    char * equals = 0L;
+
+    copyLineArray(sourceLine, line);
+
+    if (!isConst && containsValue(sourceLine, '[')) {
+        char array[LINELENGTH] = {0};
+        char number[LINELENGTH] = {0};
+        char foundType[LINELENGTH] = {0};
+        char rustArray[LINELENGTH] = {0};
+        char zeroValue[LINELENGTH] = {0};
+
+        findVariableNumberArray(sourceLine, number, array, foundType);
+        rustIdentifierName(array, rustArray);
+        if (strcmp(rustType, "f32") == 0) {
+            strcpy(zeroValue, "0.0");
+            addRustFloat(rustArray);
+        } else {
+            strcpy(zeroValue, "0");
+        }
+        if (beforeFunctions) {
+            snprintf(newLine, LINELENGTH, "static mut %s: [%s; %s] = [%s; %s];", rustArray, rustType, number, zeroValue, number);
+            addGlobal(rustArray);
+        } else {
+            snprintf(newLine, LINELENGTH, "let mut %s: [%s; %s] = [%s; %s];", rustArray, rustType, number, zeroValue, number);
+        }
+        return;
+    }
+
+    rustCopyWithoutSemicolon(line + strlen(cType), statement);
+    equals = strchr(statement, '=');
+    if (equals) {
+        char left[LINELENGTH] = {0};
+        char right[LINELENGTH] = {0};
+        int loop = 0;
+
+        while (&statement[loop] < equals) {
+            left[loop] = statement[loop];
+            loop++;
+        }
+        trimCopy(name, left);
+        trimCopy(right, equals + 1);
+        if (strcmp(rustType, "f32") == 0) {
+            rustBuildFloatExpression(right, expression);
+        } else {
+            rustPrepareLine(right, expression);
+        }
+    } else {
+        trimCopy(name, statement);
+        if (strcmp(rustType, "f32") == 0) {
+            strcpy(expression, "0.0");
+        } else {
+            strcpy(expression, "0");
+        }
+    }
+
+    rustIdentifierName(name, rustName);
+    if (strcmp(rustType, "f32") == 0) {
+        addRustFloat(rustName);
+    }
+
+    if (!isConst && !beforeFunctions && rustLineContainsGlobal(expression)) {
+        snprintf(rustExpression, LINELENGTH, "unsafe { %s }", expression);
+    } else {
+        copyLineArray(rustExpression, expression);
+    }
+
+    if (isConst) {
+        snprintf(newLine, LINELENGTH, "const %s: %s = %s;", rustName, rustType, rustExpression);
+    } else if (beforeFunctions) {
+        snprintf(newLine, LINELENGTH, "static mut %s: %s = %s;", rustName, rustType, rustExpression);
+        addGlobal(rustName);
+    } else {
+        snprintf(newLine, LINELENGTH, "let mut %s: %s = %s;", rustName, rustType, rustExpression);
+    }
+}
+
+static int rustBuildFloatAssignment(char * line, char * newLine) {
+    char statement[LINELENGTH] = {0};
+    char left[LINELENGTH] = {0};
+    char right[LINELENGTH] = {0};
+    char target[LINELENGTH] = {0};
+    char rustTarget[LINELENGTH] = {0};
+    char rustLeft[LINELENGTH] = {0};
+    char rustRight[LINELENGTH] = {0};
+    char combined[LINELENGTH] = {0};
+    char * equals = 0L;
+    int loop = 0;
+    int targetLoop = 0;
+
+    rustCopyWithoutSemicolon(line, statement);
+    equals = strchr(statement, '=');
+    if (!equals) {
+        return 0;
+    }
+    if (equals != statement && (equals[-1] == '=' || equals[-1] == '!' || equals[-1] == '<' || equals[-1] == '>' || equals[-1] == '+')) {
+        return 0;
+    }
+
+    while (&statement[loop] < equals) {
+        left[loop] = statement[loop];
+        loop++;
+    }
+    trimCopy(right, equals + 1);
+
+    loop = 0;
+    while (left[loop] && !firstValue(left[loop])) {
+        loop++;
+    }
+    while (remainingValues(left[loop])) {
+        target[targetLoop++] = left[loop++];
+    }
+    rustIdentifierName(target, rustTarget);
+    if (!rustFloatFound(rustTarget)) {
+        return 0;
+    }
+
+    rustPrepareLine(left, rustLeft);
+    if (rustFloatExpressionIsDirectCall(right)) {
+        rustPrepareLine(right, rustRight);
+    } else {
+        rustBuildFloatExpression(right, rustRight);
+    }
+    snprintf(combined, LINELENGTH, "%s = %s;", rustLeft, rustRight);
+    if (!beforeFunctions && rustLineContainsGlobal(combined)) {
+        snprintf(newLine, LINELENGTH, "unsafe { %s }", combined);
+    } else {
+        copyLineArray(newLine, combined);
+    }
+    return 1;
+}
+
+static int rustBuildPrintfLine(char * line, char * newLine, int noPrint) {
+    if (noPrint) {
+        return 0;
+    }
+
+    if (containsValue(line,'%')) {
+        char * comma = strchr(line, ',');
+        char * end = strrchr(line, ')');
+        char value[LINELENGTH] = {0};
+        char statement[LINELENGTH] = {0};
+        int loop = 0;
+
+        if (!comma || !end) {
+            return 0;
+        }
+        comma++;
+        while (comma + loop < end) {
+            value[loop] = comma[loop];
+            loop++;
+        }
+        trimCopy(statement, value);
+        snprintf(value, LINELENGTH, "println!(\"{}\", %s);", statement);
+        rustFinalizeStatement(value, newLine);
+        return 2;
+    } else {
+        char tempLine[LINELENGTH] = {0};
+        char tempLine2[LINELENGTH] = {0};
+        removeReplace(line, tempLine, "printf(", "println!(");
+        removeReplace(tempLine, tempLine2, "\\n", 0L);
+        rustFinalizeStatement(tempLine2, newLine);
+        return 2;
+    }
+}
+
+int nothingToPrintRust(char * line, char * newLine, int tabs, int noPrint) {
+    if (noPrint && !outOfMain) {
+        return 0;
+    }
+
+    if (lineCompare(line, "#")) {
+        return 0;
+    }
+    if (lineCompare(line, "int main")) {
+        outOfMain = 0;
+        beforeFunctions = 0;
+        if (noPrint) {
+            return 0;
+        }
+        rustBuildFunctionLine(line, newLine, "int", "");
+        return 2;
+    }
+    if (lineCompare(line, "return")) {
+        if (outOfMain) {
+            rustFinalizeStatement(line, newLine);
+            return 2;
+        }
+        return 0;
+    }
+    if (lineCompare(line, "printf(\"")) {
+        return rustBuildPrintfLine(line, newLine, noPrint);
+    }
+    if (lineCompare(line, "//")) {
+        return 1;
+    }
+    if (lineCompare(line, "if")) {
+        rustFinalizeStatement(line, newLine);
+        return 2;
+    }
+    if (lineCompare(line, "}")) {
+        return 1;
+    }
+    if (lineCompare(line, "while")) {
+        rustFinalizeStatement(line, newLine);
+        return 2;
+    }
+    if (lineCompare(line, "const int ")) {
+        rustBuildDeclarationLine(line, newLine, "const int", "i32", 1);
+        return 2;
+    }
+    if (lineCompare(line, "const float ")) {
+        rustBuildDeclarationLine(line, newLine, "const float", "f32", 1);
+        return 2;
+    }
+    if (lineCompare(line, "int")) {
+        if (containsValue(line, '(')) {
+            beforeFunctions = 0;
+            rustBuildFunctionLine(line, newLine, "int", "i32");
+        } else {
+            rustBuildDeclarationLine(line, newLine, "int", "i32", 0);
+        }
+        return 2;
+    }
+    if (lineCompare(line, "float")) {
+        if (containsValue(line, '(')) {
+            beforeFunctions = 0;
+            rustBuildFunctionLine(line, newLine, "float", "f32");
+        } else {
+            rustBuildDeclarationLine(line, newLine, "float", "f32", 0);
+        }
+        return 2;
+    }
+    if (lineCompare(line, "void")) {
+        beforeFunctions = 0;
+        rustBuildFunctionLine(line, newLine, "void", "");
+        return 2;
+    }
+    if (rustBuildFloatAssignment(line, newLine)) {
+        return 2;
+    }
+    rustFinalizeStatement(line, newLine);
+    return 2;
+}
+
 
 void translateFile(char* filename, char* writefilename, int noPrint, fileHandler * fileHander, fileHandler * postProcess, char * className, openEndFile * openEnd) {
     int tabs;
@@ -1033,7 +1626,7 @@ void translateFile(char* filename, char* writefilename, int noPrint, fileHandler
     }
 }
 
-int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, char** ruby, int * noPrint) {
+int parseArgs(int argc, const char * argv[], char** csource, char** python, char** javascript, char** java, char** ruby, char** rust, int * noPrint) {
     int loop = 1;
     int returnValue = 0;
     
@@ -1043,7 +1636,7 @@ int parseArgs(int argc, const char * argv[], char** csource, char** python, char
         const char* row = argv[loop];
         if (row[0] == '-') {
             if (row[1] == 'h') {
-                printf("Usage: ./ww csourcefile [-js javascriptout | -j javaout | -p pythonout | -r rubyout]\n");
+                printf("Usage: ./ww csourcefile [-js javascriptout | -j javaout | -p pythonout | -r rubyout | -rs rustout]\n");
             }
             
             if (row[1] == 'v') {
@@ -1065,7 +1658,12 @@ int parseArgs(int argc, const char * argv[], char** csource, char** python, char
                 *python = (char*)argv[loop];
                 returnValue = 1;
             }
-            if (row[1] == 'r') {
+            if (row[1] == 'r' && row[2] == 's') {
+                loop++;
+                *rust = (char*)argv[loop];
+                returnValue = 1;
+            }
+            if (row[1] == 'r' && row[2] != 's') {
                 loop++;
                 *ruby = (char*)argv[loop];
                 returnValue = 1;
@@ -1095,10 +1693,11 @@ int main(int argc, const char * argv[]) {
     char* csource = 0;
     char* java = 0L;
     char* ruby = 0L;
+    char* rust = 0L;
     char className[LINELENGTH] = {0};
 
     int noPrint;
-    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &ruby, &noPrint)) {
+    if (parseArgs(argc, argv, &csource, &python, &javascript, &java, &ruby, &rust, &noPrint)) {
         if (python) {
             printf("python : %s\n", python);
         }
@@ -1111,6 +1710,10 @@ int main(int argc, const char * argv[]) {
 
         if (ruby) {
             printf("ruby : %s\n", ruby);
+        }
+
+        if (rust) {
+            printf("rust : %s\n", rust);
         }
 
         if (java) {
@@ -1135,6 +1738,11 @@ int main(int argc, const char * argv[]) {
         if (csource && ruby) {
             clearGlobals();
             translateFile(csource, ruby, noPrint, &nothingToPrintRuby, &nothingToPrintRubyPostProcess, 0L, 0L);
+        }
+        if (csource && rust) {
+            clearGlobals();
+            clearRustTypes();
+            translateFile(csource, rust, noPrint, &nothingToPrintRust, 0L, 0L, 0L);
         }
     }
     return 0;

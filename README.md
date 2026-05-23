@@ -1,4 +1,4 @@
-# WereWolf - One Language Turns into Four
+# WereWolf - One Language Turns into Five
 
 The WereWolf or ``ww`` is a translator between a version of C which compiles through ``cc`` to:
 
@@ -6,8 +6,9 @@ The WereWolf or ``ww`` is a translator between a version of C which compiles thr
 *	Python which compiles through ``python``
 *	Java which compiles through ``javac/java``
 *	Ruby which compiles through ``ruby``
+*	Rust which compiles through ``rustc``
 
-For now, these four languages will be the only ones ported. To optimize and further pattern match the ``ww`` “satire” solution to effective cross-porting.
+For now, these five languages will be the only ones ported. To optimize and further pattern match the ``ww`` “satire” solution to effective cross-porting.
 
 ## Command Line Syntax ##
 
@@ -17,9 +18,9 @@ Inside the ``satire`` directory, compile werewolf.c:
 
 Then ``ww`` can be ran as follows:
 
-``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -rub satire_new.rb`` generates the anticipated output files
+``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -rub satire_new.rb -rs satire_new.rs`` generates the anticipated output files
 
-``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -rub satire_new.rb -n`` generates the anticipated output files without printing anything out the console or adding the main (which can be used for unit testing)
+``./ww satire.c -p satire_new.py -js satire_new.js -j satire_new.java -rub satire_new.rb -rs satire_new.rs -n`` generates the anticipated output files without printing anything out the console or adding the main (which can be used for unit testing)
 
 Alternatively also single languages can be used. For example if you only want Java output:
 
@@ -27,9 +28,9 @@ Alternatively also single languages can be used. For example if you only want Ja
 
 ## Origin of the Satire ##
 
-The idea of the satire is central to WereWolf. It offers a subset of C, Python, JavaScript, Ruby and Java that describes the majority of the functionality. It is a "satire" of the languages.
+The idea of the satire is central to WereWolf. It offers a subset of C, Python, JavaScript, Ruby, Java and Rust that describes the majority of the functionality. It is a "satire" of the languages.
 
-It also provides a skeleton for language translation between the four languages versus the current crop of slightly substandard generative AI solutions. Thus it is also a satire of the current solution space.
+It also provides a skeleton for language translation between the five languages versus the current crop of slightly substandard generative AI solutions. Thus it is also a satire of the current solution space.
 
 There are a few other applicable uses for the term satire in creating WereWolf. For now, these should be enough to start some discussion.
 
